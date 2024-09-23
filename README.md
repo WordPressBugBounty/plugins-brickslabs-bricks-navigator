@@ -1,0 +1,1 @@
+# plugins-brickslabs-bricks-navigator
