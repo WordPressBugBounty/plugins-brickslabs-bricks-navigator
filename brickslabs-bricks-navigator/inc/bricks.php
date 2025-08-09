@@ -151,6 +151,33 @@ $wp_admin_bar->add_node(
 			),
 		)
 	);
+	
+	// Maintenance mode
+	$wp_admin_bar->add_node(
+		array(
+			'id'    => 'bn-bricks-settings-maintenance-mode',
+			'title' => __( 'Maintenance Mode', 'bricks-navigator' ),
+			'parent' => 'bn-bricks-settings',
+			'href'  => admin_url( 'admin.php?page=bricks-settings#tab-maintenance' ),
+			'meta'  => array(
+				// 'title' => __( 'Bricks Settings → Maintenance Mode', 'bricks-navigator' ),
+				'class' => 'bn-parent-of-mini-child'
+			),
+		)
+	);
+	// Maintenance mode - new tab
+	$wp_admin_bar->add_node(
+		array(
+			'id'    => 'bn-bricks-settings-maintenance-mode-new-tab',
+			'parent' => 'bn-bricks-settings-maintenance-mode',
+			'href'  => admin_url( 'admin.php?page=bricks-settings#tab-maintenance' ),
+			'meta'  => array(
+				'title' => __( 'Bricks Settings → Maintenance Mode in new tab', 'bricks-navigator' ),
+				'target' => '_blank',
+				'class'  => 'bn-mini-child bn-mini-child-new-tab',
+			),
+		)
+	);
 
 	// API Keys
 	$wp_admin_bar->add_node(
@@ -269,7 +296,7 @@ $wp_admin_bar->add_node(
 	// Pages - child menu
 	require_once 'pages-edit.php';
 
-if ( ! get_option( 'brickslabs_bricks_navigator_hide_bricks_internal' ) ) {
+if ( get_option( 'brickslabs_bricks_navigator_show_bricks_internal' ) ) {
 	// Getting Started.
 	$wp_admin_bar->add_node(
 		array(
@@ -323,6 +350,34 @@ if ( ! get_option( 'brickslabs_bricks_navigator_hide_bricks_internal' ) ) {
 				),
 			)
 		);
+
+	// Form Submissions
+	$wp_admin_bar->add_node(
+		array(
+			'id'    => 'bn-bricks-settings-form-submissions',
+			'title' => __( 'Form Submissions', 'bricks-navigator' ),
+			'parent' => 'bn-bricks',
+			'href'  => admin_url( 'admin.php?page=bricks-form-submissions' ),
+			'meta'  => array(
+				// 'title' => __( 'Bricks Settings → Form Submissions', 'bricks-navigator' ),
+				'class' => 'bn-parent-of-mini-child'
+			),
+		)
+	);
+		// Form Submissions - new tab
+		$wp_admin_bar->add_node(
+			array(
+				'id'    => 'bn-bricks-settings-form-submissions-new-tab',
+				'parent' => 'bn-bricks-settings-form-submissions',
+				'href'  => admin_url( 'admin.php?page=bricks-form-submissions' ),
+				'meta'  => array(
+					'title' => __( 'Bricks Settings → SidebForm Submissionsars in a new tab', 'bricks-navigator' ),
+					'target' => '_blank',
+					'class'  => 'bn-mini-child bn-mini-child-new-tab',
+				),
+			)
+		);
+
 
 	// Sidebars
 	$wp_admin_bar->add_node(
@@ -406,7 +461,7 @@ if ( ! get_option( 'brickslabs_bricks_navigator_hide_bricks_internal' ) ) {
 		);
 }
 
-if ( ! get_option( 'brickslabs_bricks_navigator_hide_bricks_external' ) ) {
+if ( get_option( 'brickslabs_bricks_navigator_show_bricks_external' ) ) {
 	// Idea Board.
 	$wp_admin_bar->add_node(
 		array(
@@ -501,6 +556,20 @@ if ( ! get_option( 'brickslabs_bricks_navigator_hide_bricks_external' ) ) {
 			'href'  => 'https://www.youtube.com/c/bricksbuilder/videos',
 			'meta'  => array(
 				// 'title' => __( 'Bricks YouTube', 'bricks-navigator' ),
+				'target' => '_blank',
+			),
+		)
+	);
+	
+	// Bricks Experts.
+	$wp_admin_bar->add_node(
+		array(
+			'id'    => 'bn-bricks-experts',
+			'title' => __( 'Bricks Experts', 'bricks-navigator' ),
+			'parent' => 'bn-bricks',
+			'href'  => 'https://bricksbuilder.io/experts/',
+			'meta'  => array(
+				// 'title' => __( 'Bricks Experts', 'bricks-navigator' ),
 				'target' => '_blank',
 			),
 		)

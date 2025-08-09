@@ -3,12 +3,12 @@
 Contributors: srikat
 Tags: bricks, bricks builder, admin bar
 Donate link: https://www.paypal.me/sridharkatakam
-Requires at least: 5.2
-Tested up to: 6.5.0
-Stable tag: 1.0.3
-Requires PHP: 7.4
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Requires at least: 6.0
+Tested up to: 6.8.2
+Stable tag: 1.1.0
+Requires PHP: 8.0
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Adds quick links in the WordPress admin bar for users of Bricks theme.
 
@@ -22,13 +22,15 @@ The admin bar can also be enabled in Bricks editor pages via the plugin's settin
 
 Links to Bricks-specific plugins' settings page are also provided.
 
-The menu can be simplified by disabling unwanted items in the plugin's settings page.
+Links to community sites, internal and external Bricks links can be enabled in the plugin's settings page.
 
 A "new tab" icon is provided for site-specific menu items added by the plugin to open that menu item in a new tab.
 
 All external links open in a new tab.
 
-Built for the Bricks community by [BricksLabs](https://brickslabs.com/).
+Built for the Bricks community by Sridhar Katakam of [BricksLabs](https://brickslabs.com/).
+
+Performance Notice: The free version loads all templates and pages in the menu and works best for smaller sites (up to ~20 templates and ~50 pages). For larger sites with extensive content, consider upgrading to our upcoming Pro version for better performance.
 
 == Installation ==
 
@@ -50,6 +52,15 @@ Search for `bricks navigator` from within your WordPress plugins' Add New page a
 4. Screenshot showing the plugin's settings page.
 
 == Changelog ==
+
+= 1.1.1 ( Aug 09, 2025 ) =
+* Fixed the plugin settings menu visibility when no third-party plugins are active.
+
+= 1.1.0 ( Aug 09, 2025 ) =
+* Fixed the CSS for the "Show admin bar in Bricks" setting in Bricks 2.0.
+* Improved performance and reliability. Plugin now gracefully degrades when Bricks isn't available. Resolved cPanel WP Toolkit SSO login issue and prevents similar problems with WP-CLI, automated backups, or any other tools that load WordPress without themes.
+* Revamped UI.
+* Community, Internal and External Bricks links have been disabled by default. They are now opt-in rather than opt-out.
 
 = 1.0.3 ( Dec 03, 2023 ) =
 * Fixed the CSS for the "Show admin bar in Bricks" setting for Bricks 1.9.3.

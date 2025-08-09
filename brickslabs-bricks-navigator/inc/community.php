@@ -55,13 +55,13 @@ $wp_admin_bar->add_node(
 			),
 		)
 	);
-		// ACSS Cheat Sheet
+		// ACSS Docs
 		$wp_admin_bar->add_node(
 			array(
-				'id'    => 'bn-bricks-acss-cheat-sheet',
-				'title' => __( 'ACSS Cheat Sheet', 'bricks-navigator' ),
+				'id'    => 'bn-bricks-acss-docs',
+				'title' => __( 'ACSS Documentation', 'bricks-navigator' ),
 				'parent' => 'bn-bricks-acss',
-				'href'  => 'https://automaticcss.com/cheat-sheet/',
+				'href'  => 'https://automaticcss.com/docs',
 				'meta'  => array(
 					'target' => '_blank',
 				),
@@ -80,6 +80,18 @@ $wp_admin_bar->add_node(
 			),
 		)
 	);
+		// BricksExtras Docs
+		$wp_admin_bar->add_node(
+			array(
+				'id'    => 'bn-bricks-bricksextras-docs',
+				'title' => __( 'BricksExtras Documentation', 'bricks-navigator' ),
+				'parent' => 'bn-bricks-bricksextras',
+				'href'  => 'https://bricksextras.com/docs/',
+				'meta'  => array(
+					'target' => '_blank',
+				),
+			)
+		);
 	
 	// Bricks directory
 	$wp_admin_bar->add_node(
@@ -161,13 +173,13 @@ $wp_admin_bar->add_node(
 		)
 	);
 	
-	// BricksUltimate
+	// Brixies
 	$wp_admin_bar->add_node(
 		array(
-			'id'    => 'bn-bricks-bricksultimate',
-			'title' => __( 'BricksUltimate', 'bricks-navigator' ),
+			'id'    => 'bn-bricks-brixies',
+			'title' => __( 'Brixies', 'bricks-navigator' ),
 			'parent' => 'bn-bricks-community',
-			'href'  => 'https://bricksultimate.com/',
+			'href'  => 'https://brixies.co/',
 			'meta'  => array(
 				'target' => '_blank',
 			),
@@ -262,32 +274,6 @@ $wp_admin_bar->add_node(
 			'title' => __( 'Max Addons Pro', 'bricks-navigator' ),
 			'parent' => 'bn-bricks-community',
 			'href'  => 'https://wpbricksaddons.com/',
-			'meta'  => array(
-				'target' => '_blank',
-			),
-		)
-	);
-	
-	// OxyProps (BricksProps)
-	$wp_admin_bar->add_node(
-		array(
-			'id'    => 'bn-bricks-oxyprops',
-			'title' => __( 'OxyProps (BricksProps)', 'bricks-navigator' ),
-			'parent' => 'bn-bricks-community',
-			'href'  => 'https://oxyprops.com/',
-			'meta'  => array(
-				'target' => '_blank',
-			),
-		)
-	);
-	
-	// Structeezy
-	$wp_admin_bar->add_node(
-		array(
-			'id'    => 'bn-bricks-structeezy',
-			'title' => __( 'Structeezy', 'bricks-navigator' ),
-			'parent' => 'bn-bricks-community',
-			'href'  => 'https://structeezy.com/',
 			'meta'  => array(
 				'target' => '_blank',
 			),

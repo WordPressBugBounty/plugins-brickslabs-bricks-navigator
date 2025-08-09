@@ -4,8 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( class_exists( '\BricksExtras\BricksExtrasMain' ) || class_exists( '\Automatic_CSS\Autoloader' ) || class_exists( '\Advanced_Themer_Bricks\AT__Init' ) || class_exists( 'Bricksforge' ) || class_exists( '\CoreFramework\Config\Plugin' ) || class_exists( '\OxyProps\Inc\Oxyprops' ) || class_exists( '\Structeezy\Inc\Structeezy' ) ) {
-// Settings.
+// Always create Plugin Settings parent menu when this file is loaded
 $wp_admin_bar->add_node(
 	array(
 		'id'    => 'bn-bricks-plugin-settings',
@@ -17,7 +16,6 @@ $wp_admin_bar->add_node(
 		
 	)
 );
-}
 
 	// ACSS
 	if ( class_exists( '\Automatic_CSS\Autoloader' ) ) {
