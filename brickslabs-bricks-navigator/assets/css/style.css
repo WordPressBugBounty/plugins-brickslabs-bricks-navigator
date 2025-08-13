@@ -14,9 +14,9 @@
 	padding-right: 6px;
 } */
 
-.bn-top-level-item > .ab-sub-wrapper > ul {
-  max-height: 90vh;
-  overflow-y: auto;
+#wp-admin-bar-bn-bricks .ab-submenu:not(#wp-admin-bar-bn-bricks-default) {
+    max-height: 80dvh;
+    overflow-y: auto;
 }
 
 /* Edit Page */
