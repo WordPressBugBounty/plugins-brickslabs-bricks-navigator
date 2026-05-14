@@ -3,191 +3,269 @@
  * Plugin Name:       BricksLabs Bricks Navigator
  * Plugin URI:        https://brickslabs.com/bricks-navigator/
  * Description:       Adds quick links in the WordPress admin bar for users of the Bricks theme.
- * Version:           1.1.2
+ * Version:           1.1.3
  * Author:            Sridhar Katakam
  * Author URI:        https://brickslabs.com/
- * Text Domain:       brickslabs-bricks-navigator
+ * Text Domain:       bricks-navigator
  * Requires at least: 6.0
- * Requires PHP:      8.0
+ * Requires PHP:      8.3
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 namespace BricksLabs\BricksNavigator;
 
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+if (!defined("ABSPATH")) {
+    exit();
 }
 
-final class Plugin {
-    const VERSION = '1.1.2';
-    private static $instance = null;
+final class Plugin
+{
+    const VERSION = "1.1.3";
 
-    public static function instance(): self {
+    private static ?self $instance = null;
+
+    /** @var Settings */
+    private Settings $settings;
+
+    public static function instance(): self
+    {
         if (null === self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->define_constants();
-        add_action('plugins_loaded', [$this, 'init']);
+        add_action("plugins_loaded", [$this, "init"]);
     }
 
-    private function define_constants(): void {
-        define( 'BRICKSLABS_BRICKS_NAVIGATOR_VERSION', self::VERSION );
-        define( 'BRICKSLABS_BRICKS_NAVIGATOR_BASE', plugin_basename( __FILE__ ) );
-        define( 'BRICKSLABS_BRICKS_NAVIGATOR_PATH', plugin_dir_path( __FILE__ ) );
-        define( 'BRICKSLABS_BRICKS_NAVIGATOR_URL', plugin_dir_url( __FILE__ ) );
+    private function define_constants(): void
+    {
+        if (!defined("BRICKSLABS_BRICKS_NAVIGATOR_VERSION")) {
+            define("BRICKSLABS_BRICKS_NAVIGATOR_VERSION", self::VERSION);
+        }
+        if (!defined("BRICKSLABS_BRICKS_NAVIGATOR_BASE")) {
+            define(
+                "BRICKSLABS_BRICKS_NAVIGATOR_BASE",
+                plugin_basename(__FILE__),
+            );
+        }
+        if (!defined("BRICKSLABS_BRICKS_NAVIGATOR_PATH")) {
+            define(
+                "BRICKSLABS_BRICKS_NAVIGATOR_PATH",
+                plugin_dir_path(__FILE__),
+            );
+        }
+        if (!defined("BRICKSLABS_BRICKS_NAVIGATOR_URL")) {
+            define("BRICKSLABS_BRICKS_NAVIGATOR_URL", plugin_dir_url(__FILE__));
+        }
     }
 
-    public function init(): void {
+    public function init(): void
+    {
         $this->load_textdomain();
-        add_action( 'init', [ $this, 'init_hooks' ], 0 );
-        
-        if ( is_admin() ) {
-            require_once BRICKSLABS_BRICKS_NAVIGATOR_PATH . 'inc/settings.php';
-            add_filter( 'plugin_action_links_' . BRICKSLABS_BRICKS_NAVIGATOR_BASE, [ $this, 'add_settings_link' ] );
+        $this->load_classes();
+
+        $this->settings = new Settings();
+        $this->settings->register();
+
+        if (is_admin()) {
+            add_filter(
+                "plugin_action_links_" . BRICKSLABS_BRICKS_NAVIGATOR_BASE,
+                [$this, "add_settings_link"],
+            );
         }
-        
-        if ( get_option( 'brickslabs_bricks_navigator_show_in_editor' ) ) {
-            require_once BRICKSLABS_BRICKS_NAVIGATOR_PATH . 'inc/show-admin-bar-in-editor.php';
-        }
-        
-        add_action( 'admin_init', [ $this, 'check_environment' ] );
+
+        // Always instantiate Editor — it gates individual features internally.
+        $editor = new Editor();
+        $editor->register((bool) $this->settings->get("show_in_editor"));
+
+        add_action("admin_init", [$this, "check_environment"]);
+        add_action("init", [$this, "init_hooks"], 0);
     }
 
-    public function init_hooks(): void {
-        add_action( 'wp_loaded', function() {
-            if ( $this->can_use_navigator() ) {
-                add_action( 'admin_bar_menu', [ $this, 'add_admin_bar_menu' ], 999 );
-                add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
-                add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+    private function load_classes(): void
+    {
+        require_once BRICKSLABS_BRICKS_NAVIGATOR_PATH .
+            "inc/class-settings.php";
+        require_once BRICKSLABS_BRICKS_NAVIGATOR_PATH .
+            "inc/class-admin-bar.php";
+        require_once BRICKSLABS_BRICKS_NAVIGATOR_PATH . "inc/class-editor.php";
+    }
+
+    public function init_hooks(): void
+    {
+        add_action("wp_loaded", function () {
+            if ($this->can_use_navigator()) {
+                add_action(
+                    "admin_bar_menu",
+                    [$this, "add_admin_bar_menu"],
+                    999,
+                );
+                add_action("admin_enqueue_scripts", [$this, "enqueue_assets"]);
+                add_action("wp_enqueue_scripts", [$this, "enqueue_assets"]);
             }
-        } );
+        });
     }
 
-    public function check_environment(): bool {
+    public function check_environment(): bool
+    {
         $errors = [];
-        
-        if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
+
+        if (version_compare(PHP_VERSION, "8.0", "<")) {
             $errors[] = sprintf(
-                __( 'BricksLabs Bricks Navigator requires PHP version %s or higher. You are running version %s.', 'bricks-navigator' ),
-                '7.4',
-                PHP_VERSION
+                /* translators: 1: required version, 2: current version */
+                __(
+                    'BricksLabs Bricks Navigator requires PHP version %1$s or higher. You are running version %2$s.',
+                    "bricks-navigator",
+                ),
+                "8.0",
+                PHP_VERSION,
             );
         }
-        
-        if ( version_compare( $GLOBALS['wp_version'], '5.2', '<' ) ) {
+
+        if (version_compare($GLOBALS["wp_version"], "6.0", "<")) {
             $errors[] = sprintf(
-                __( 'BricksLabs Bricks Navigator requires WordPress version %s or higher. You are running version %s.', 'bricks-navigator' ),
-                '5.2',
-                $GLOBALS['wp_version']
+                /* translators: 1: required version, 2: current version */
+                __(
+                    'BricksLabs Bricks Navigator requires WordPress version %1$s or higher. You are running version %2$s.',
+                    "bricks-navigator",
+                ),
+                "6.0",
+                $GLOBALS["wp_version"],
             );
         }
-        
-        $parent_theme = wp_get_theme( get_template() );
-        if ( 'Bricks' !== $parent_theme->get( 'Name' ) ) {
-            $errors[] = __( 'BricksLabs Bricks Navigator requires Bricks theme to be active.', 'bricks-navigator' );
+
+        if ("Bricks" !== $this->get_theme_name()) {
+            $errors[] = __(
+                "BricksLabs Bricks Navigator requires Bricks theme to be active.",
+                "bricks-navigator",
+            );
         }
-        
-        if ( ! empty( $errors ) ) {
-            add_action( 'admin_notices', function() use ( $errors ) {
+
+        if (!empty($errors)) {
+            add_action("admin_notices", function () use ($errors) {
                 echo '<div class="notice notice-error"><p>';
-                echo implode( '</p><p>', $errors );
-                echo '</p></div>';
-            } );
-            
-            require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-            deactivate_plugins( BRICKSLABS_BRICKS_NAVIGATOR_BASE );
-            
-            if ( isset( $_GET['activate'] ) ) {
-                unset( $_GET['activate'] );
+                echo implode("</p><p>", array_map("esc_html", $errors));
+                echo "</p></div>";
+            });
+
+            require_once ABSPATH . "wp-admin/includes/plugin.php";
+            deactivate_plugins(BRICKSLABS_BRICKS_NAVIGATOR_BASE);
+
+            if (isset($_GET["activate"])) {
+                unset($_GET["activate"]);
             }
-            
+
             return false;
         }
-        
+
         return true;
     }
 
-    public function load_textdomain(): void {
-        load_plugin_textdomain( 'bricks-navigator', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+    public function load_textdomain(): void
+    {
+        load_plugin_textdomain(
+            "bricks-navigator",
+            false,
+            dirname(plugin_basename(__FILE__)) . "/languages",
+        );
     }
 
-    public function can_use_navigator(): bool {
-        if ( ! function_exists( 'is_admin_bar_showing' ) || ! is_admin_bar_showing() ) {
-            return false;
-        }
-        
-        $parent_theme = wp_get_theme( get_template() );
-        if ( 'Bricks' !== $parent_theme->get( 'Name' ) ) {
-            return false;
-        }
-        
-        if ( ! function_exists( 'bricks_is_builder' ) ) {
-            return false;
-        }
-        
-        // Use newer Builder_Permissions class if available, fallback to Capabilities
-        if ( class_exists( '\Bricks\Builder_Permissions' ) ) {
-            return \Bricks\Builder_Permissions::user_has_permission( 'access_builder_page' );
-        }
-        
-        // Fallback to legacy method
-        return class_exists( '\Bricks\Capabilities' ) && \Bricks\Capabilities::current_user_can_use_builder();
-    }
+    /**
+     * Whether the current user can see the Navigator menu.
+     *
+     * Result is cached for the lifetime of the request — the check is pure
+     * (same inputs produce the same output) so there is no reason to repeat it.
+     */
+    public function can_use_navigator(): bool
+    {
+        static $result = null;
 
-    public function add_admin_bar_menu( $wp_admin_bar ): void {
-        try {
-            $iconhtml = sprintf(
-                '<img src="%s" style="width: 16px; height: 16px; padding-right: 6px;" alt="" />',
-                esc_url( BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/images/bricks-logo.png' )
+        if (null !== $result) {
+            return $result;
+        }
+
+        if (
+            !function_exists("is_admin_bar_showing") ||
+            !is_admin_bar_showing()
+        ) {
+            return $result = false;
+        }
+
+        if ("Bricks" !== $this->get_theme_name()) {
+            return $result = false;
+        }
+
+        if (!function_exists("bricks_is_builder")) {
+            return $result = false;
+        }
+
+        if (class_exists("\Bricks\Builder_Permissions")) {
+            return $result = \Bricks\Builder_Permissions::user_has_permission(
+                "access_builder_page",
             );
-            
-            $wp_admin_bar->add_node( [
-                'id'    => 'bn-bricks',
-                'title' => $iconhtml . esc_html__( 'Bricks', 'bricks-navigator' ),
-                'href'  => esc_url( admin_url( 'themes.php?page=bricks' ) ),
-            ] );
-            
-            require_once BRICKSLABS_BRICKS_NAVIGATOR_PATH . 'inc/bricks.php';
-            
-            if ( get_option( 'brickslabs_bricks_navigator_show_community_menu' ) ) {
-                require_once BRICKSLABS_BRICKS_NAVIGATOR_PATH . 'inc/community.php';
-            }
-            
-            if ( get_option( 'brickslabs_bricks_navigator_show_thirdparty_plugins' ) ) {
-                require_once BRICKSLABS_BRICKS_NAVIGATOR_PATH . 'inc/thirdpartyplugins.php';
-            }
-            
-        } catch ( \Exception $e ) {
-            error_log( 'Bricks Navigator Error: ' . $e->getMessage() );
+        }
+
+        return $result =
+            class_exists("\Bricks\Capabilities") &&
+            \Bricks\Capabilities::current_user_can_use_builder();
+    }
+
+    /** Expose the settings object to other classes (e.g. Editor). */
+    public function settings(): Settings
+    {
+        return $this->settings;
+    }
+
+    public function add_admin_bar_menu(\WP_Admin_Bar $wp_admin_bar): void
+    {
+        try {
+            $admin_bar = new Admin_Bar($wp_admin_bar);
+            $admin_bar->build($this->settings->all());
+        } catch (\Exception $e) {
+            error_log("Bricks Navigator Error: " . $e->getMessage());
         }
     }
 
-    public function enqueue_assets(): void {
-        if ( ! is_admin_bar_showing() ) {
+    public function enqueue_assets(): void
+    {
+        if (!is_admin_bar_showing()) {
             return;
         }
-        
+
         wp_enqueue_style(
-            'brickslabs-bricks-navigator',
-            BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/css/style.css',
+            "brickslabs-bricks-navigator",
+            BRICKSLABS_BRICKS_NAVIGATOR_URL . "assets/css/style.css",
             [],
-            BRICKSLABS_BRICKS_NAVIGATOR_VERSION
+            BRICKSLABS_BRICKS_NAVIGATOR_VERSION,
         );
     }
 
-    public function add_settings_link( array $links ): array {
+    public function add_settings_link(array $links): array
+    {
         $settings_link = sprintf(
             '<a href="%s">%s</a>',
-            esc_url( admin_url( 'admin.php?page=brickslabs-bricks-navigator' ) ),
-            esc_html__( 'Settings', 'bricks-navigator' )
+            esc_url(admin_url("admin.php?page=brickslabs-bricks-navigator")),
+            esc_html__("Settings", "bricks-navigator"),
         );
-        array_unshift( $links, $settings_link );
+        array_unshift($links, $settings_link);
         return $links;
+    }
+
+    /** Returns the active theme name, cached for the request. */
+    private function get_theme_name(): string
+    {
+        static $name = null;
+
+        if (null === $name) {
+            $name = wp_get_theme(get_template())->get("Name");
+        }
+
+        return $name;
     }
 }
 

@@ -1,0 +1,106 @@
+.bricks-navigator-settings {
+	max-width: 960px;
+	margin: 40px 20px 20px 20px;
+	padding: 30px 30px 10px 30px;
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bricks-navigator-settings .settings-header {
+	margin-bottom: 30px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid #eee;
+}
+
+.bricks-navigator-settings .settings-header h1 {
+	margin: 0 0 10px;
+	padding: 0;
+	font-size: 24px;
+	font-weight: 600;
+}
+
+.bricks-navigator-settings .settings-header .description {
+	color: #666;
+	font-size: 14px;
+	margin: 0;
+}
+
+.bricks-navigator-settings .form-table {
+	margin-top: 20px;
+}
+
+.bricks-navigator-settings .form-table th {
+	padding: 20px 10px 20px 0;
+	width: 200px;
+	font-weight: 500;
+}
+
+.bricks-navigator-settings .form-table td {
+	padding: 15px 10px;
+	position: relative;
+}
+
+.bricks-navigator-settings .form-table .description {
+	margin-top: 8px;
+	color: #666;
+	font-style: normal;
+}
+
+.bricks-navigator-settings .settings-form .submit {
+	margin-top: 30px;
+	padding-top: 20px;
+	border-top: 1px solid #eee;
+}
+
+/* Toggle switch */
+.bricks-navigator-settings input[type="checkbox"] {
+	appearance: none;
+	-webkit-appearance: none;
+	background-color: #eaecef;
+	border: none;
+	border-radius: 16px;
+	box-shadow: none;
+	cursor: pointer;
+	height: 16px;
+	margin: 0 4px 0 0;
+	outline: none;
+	padding: 0;
+	width: 26px;
+	vertical-align: middle;
+}
+
+.bricks-navigator-settings input[type="checkbox"]:before {
+	-webkit-appearance: none;
+	background-color: #9da8b2;
+	border-radius: 12px;
+	content: "";
+	cursor: pointer;
+	display: block;
+	height: 12px;
+	left: 2px;
+	margin: 0;
+	position: relative;
+	top: 2px;
+	transition: all 0.2s ease-out;
+	width: 12px;
+}
+
+.bricks-navigator-settings input[type="checkbox"]:checked {
+	background-color: #2271b1;
+}
+
+.bricks-navigator-settings input[type="checkbox"]:checked:before {
+	background-color: #fff;
+	left: 0;
+	opacity: 1;
+	transform: translateX(100%);
+}
+
+.bricks-navigator-settings input[type="checkbox"] + label {
+	cursor: pointer;
+}
+
+.bricks-navigator-settings input[type="checkbox"]:focus {
+	box-shadow: 0 0 0 1px #2271b1;
+}
