@@ -98,6 +98,61 @@ final class Editor {
 				true
 			);
 		}
+
+		if ( $settings->get( 'css_editor' ) ) {
+			wp_enqueue_script(
+				'brickslabs-bricks-navigator-css-editor',
+				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/js/css-editor.js',
+				[ 'bricks-builder' ],
+				BRICKSLABS_BRICKS_NAVIGATOR_VERSION,
+				true
+			);
+			wp_localize_script(
+				'brickslabs-bricks-navigator-css-editor',
+				'blCssEditorConfig',
+				[
+					'autoApply' => (bool) $settings->get( 'css_editor_auto_apply' ),
+				]
+			);
+			wp_enqueue_style(
+				'brickslabs-bricks-navigator-css-editor',
+				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/css/css-editor.css',
+				[],
+				BRICKSLABS_BRICKS_NAVIGATOR_VERSION
+			);
+		}
+
+		if ( $settings->get( 'bem_classes' ) ) {
+			wp_enqueue_script(
+				'brickslabs-bricks-navigator-bem-classes',
+				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/js/bem-classes.js',
+				[ 'bricks-builder' ],
+				BRICKSLABS_BRICKS_NAVIGATOR_VERSION,
+				true
+			);
+			wp_enqueue_style(
+				'brickslabs-bricks-navigator-bem-classes',
+				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/css/bem-classes.css',
+				[],
+				BRICKSLABS_BRICKS_NAVIGATOR_VERSION
+			);
+		}
+
+		if ( $settings->get( 'css_var_context_menu' ) ) {
+			wp_enqueue_script(
+				'brickslabs-bricks-navigator-css-var-context-menu',
+				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/js/css-var-context-menu.js',
+				[ 'bricks-builder' ],
+				BRICKSLABS_BRICKS_NAVIGATOR_VERSION,
+				true
+			);
+			wp_enqueue_style(
+				'brickslabs-bricks-navigator-css-var-context-menu',
+				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/css/css-var-context-menu.css',
+				[],
+				BRICKSLABS_BRICKS_NAVIGATOR_VERSION
+			);
+		}
 	}
 
 	/**

@@ -22,6 +22,10 @@ final class Settings {
 		'brickslabs_bricks_navigator_show_thirdparty_plugins' => true,
 		'brickslabs_bricks_navigator_auto_select_class'       => false,
 		'brickslabs_bricks_navigator_keyboard_shortcuts'      => false,
+		'brickslabs_bricks_navigator_css_editor'              => false,
+		'brickslabs_bricks_navigator_css_editor_auto_apply'   => false,
+		'brickslabs_bricks_navigator_bem_classes'             => false,
+		'brickslabs_bricks_navigator_css_var_context_menu'   => false,
 	];
 
 	public function register(): void {
@@ -206,6 +210,38 @@ final class Settings {
 			'brickslabs_bricks_navigator_enhancements',
 			false,
 			__( 'Add keyboard shortcuts in the Bricks editor: Alt+H (toggle :hover), S (Section), C (Container), B (Block), D (Div), T (Text Basic), H (Heading), I (Image), R (Rich Text), L (Text Link), W (Wrap with Block).', 'bricks-navigator' )
+		);
+
+		$this->add_toggle(
+			'brickslabs_bricks_navigator_css_editor',
+			__( 'CSS Editor', 'bricks-navigator' ) . '<br><span style="font-weight:normal;">' . __( '(Beta)', 'bricks-navigator' ) . '</span>',
+			'brickslabs_bricks_navigator_enhancements',
+			false,
+			__( 'Show an inline CSS editor panel in the Bricks element panel with two-way binding between CSS and controls. Editable CSS maps back to layout controls; unmappable properties (color, background, border, etc.) are stored in the element\'s Custom CSS field.', 'bricks-navigator' )
+		);
+
+		$this->add_toggle(
+			'brickslabs_bricks_navigator_css_editor_auto_apply',
+			__( 'CSS Editor - Auto Apply', 'bricks-navigator' ) . '<br><span style="font-weight:normal;">' . __( '(Beta)', 'bricks-navigator' ) . '</span>',
+			'brickslabs_bricks_navigator_enhancements',
+			false,
+			__( 'Automatically apply CSS Editor changes as you type (debounced). Requires CSS Editor to be enabled.', 'bricks-navigator' )
+		);
+
+		$this->add_toggle(
+			'brickslabs_bricks_navigator_bem_classes',
+			__( 'BEM Classes', 'bricks-navigator' ) . '<br><span style="font-weight:normal;">' . __( '(Beta)', 'bricks-navigator' ) . '</span>',
+			'brickslabs_bricks_navigator_enhancements',
+			false,
+			__( 'Add a BEM class action to each Bricks structure panel layer. Choose a block class, review descendants, exclude specific elements, and assign global classes in BEM format.', 'bricks-navigator' )
+		);
+
+		$this->add_toggle(
+			'brickslabs_bricks_navigator_css_var_context_menu',
+			__( 'CSS Variable Context Menu', 'bricks-navigator' ) . '<br><span style="font-weight:normal;">' . __( '(Beta)', 'bricks-navigator' ) . '</span>',
+			'brickslabs_bricks_navigator_enhancements',
+			false,
+			__( 'Right-click any compatible Bricks panel control (number, color, text CSS fields) to open a popover listing CSS custom properties defined on :root. Variables are filtered by relevance to the control type (color, spacing, typography, etc.). Click a variable to insert var(--name) into the field.', 'bricks-navigator' )
 		);
 	}
 

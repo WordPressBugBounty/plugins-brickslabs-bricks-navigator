@@ -1,0 +1,138 @@
+#blcss-editor-panel {
+	border-top: 1px solid var(--builder-border-color, #e0e0e0);
+	font-size: 12px;
+}
+
+#blcss-editor-panel .blcss-header {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 12px;
+	cursor: pointer;
+	user-select: none;
+	background: var(--builder-bg-3);
+}
+
+#blcss-editor-panel .blcss-title {
+	font-weight: 600;
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	flex-shrink: 0;
+}
+
+#blcss-editor-panel .blcss-title::after {
+	content: '';
+	display: none;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: #f0b429;
+	margin-left: 5px;
+	vertical-align: middle;
+}
+
+#blcss-editor-panel.blcss-dirty .blcss-title::after {
+	display: inline-block;
+}
+
+#blcss-editor-panel .blcss-selector {
+	/* font-size: 11px; */
+	font-weight: bold;
+	font-family: monospace;
+	color: var(--builder-accent-color, #3172e0);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	flex: 1;
+	color: var(--builder-color-accent);
+}
+
+#blcss-editor-panel .blcss-toggle-icon {
+	font-style: normal;
+	font-size: 10px;
+	color: var(--builder-text-muted, #999);
+	flex-shrink: 0;
+	transition: transform 0.2s;
+	display: inline-block;
+}
+
+#blcss-editor-panel.blcss-collapsed .blcss-toggle-icon {
+	transform: rotate(-90deg);
+}
+
+#blcss-editor-panel .blcss-body {
+	padding: var(--builder-spacing, 16px);
+}
+
+#blcss-editor-panel.blcss-collapsed .blcss-body {
+	display: none;
+}
+
+#blcss-editor-panel .blcss-textarea {
+	width: 100%;
+	min-height: 240px;
+	max-height: 640px;
+	font-family: monospace;
+	font-size: 12px;
+	line-height: 1.5;
+	padding: 8px;
+	box-sizing: border-box;
+	resize: vertical;
+	border: 1px solid var(--builder-border-color, #ccc);
+	border-radius: 3px;
+	background: var(--builder-bg-2);
+	outline: none;
+	display: block;
+}
+
+#blcss-editor-panel .blcss-textarea:focus {
+	border-color: var(--builder-accent-color, #2271b1);
+	box-shadow: 0 0 0 1px var(--builder-accent-color, #2271b1);
+}
+
+#blcss-editor-panel .blcss-footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 16px;
+}
+
+#blcss-editor-panel .blcss-context-badge {
+	font-size: 10px;
+	font-weight: 600;
+	padding: 2px 10px;
+	border-radius: 10px;
+	background: #fce8e6;
+	color: #c5221f;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+#blcss-editor-panel .blcss-context-badge.blcss-class-context {
+	background: #e8f0fe;
+	color: #1a73e8;
+}
+
+#blcss-editor-panel .blcss-apply-btn {
+	font-size: 11px;
+	font-weight: 600;
+	padding: 8px 12px;
+	border: none;
+	border-radius: 3px;
+	background: var(--builder-accent-color, #2271b1);
+	color: #fff;
+	cursor: pointer;
+	transition: opacity 0.15s;
+	line-height: 1;
+	letter-spacing: 1px;
+}
+
+#blcss-editor-panel .blcss-apply-btn:hover {
+	opacity: 0.85;
+}
+
+#blcss-editor-panel .blcss-apply-btn:disabled {
+	opacity: 0.45;
+	cursor: default;
+}

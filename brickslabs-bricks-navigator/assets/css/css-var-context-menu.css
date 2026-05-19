@@ -1,0 +1,175 @@
+/* ============================================================
+   BricksLabs Bricks Navigator — CSS Variable Context Menu
+   ============================================================ */
+
+#bl-css-var-menu {
+	display: none; /* shown via JS by setting display:flex */
+	position: fixed;
+	z-index: 999999;
+	flex-direction: column;
+	width: 280px;
+	max-height: 420px;
+	background: var(--builder-bg);
+	border: 1px solid #363650;
+	border-radius: 8px;
+	box-shadow:
+		0 8px 32px rgba(0, 0, 0, 0.5),
+		0 2px 8px rgba(0, 0, 0, 0.3);
+	font-family:
+		-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+	font-size: 12px;
+	color: #d0d0ec;
+	overflow: hidden;
+}
+
+/* ---- Header ---- */
+
+.bl-var-header {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 8px 8px 6px;
+	border-bottom: 1px solid #2e2e48;
+	flex-shrink: 0;
+}
+
+.bl-var-search {
+	flex: 1;
+	min-width: 0;
+	background: var(--builder-bg-2);
+	border: 1px solid #40405a;
+	border-radius: 5px;
+	color: #d0d0ec;
+	font-size: 12px;
+	padding: 8px 9px;
+	outline: none;
+	transition: border-color 0.15s;
+	line-height: 1;
+}
+
+.bl-var-search:focus {
+	border-color: #7878e0;
+}
+
+.bl-var-refresh,
+.bl-var-close {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	background: none;
+	border: none;
+	color: #b0b3b6;
+	cursor: pointer;
+	border-radius: 4px;
+	font-size: 14px;
+	line-height: 1;
+	padding: 0;
+	transition:
+		background 0.15s,
+		color 0.15s;
+}
+
+.bl-var-refresh:hover,
+.bl-var-close:hover {
+	background: #2e2e48;
+	color: #d0d0ec;
+}
+
+/* ---- Scrollable list ---- */
+
+.bl-var-list {
+	overflow-y: auto;
+	flex: 1;
+	padding: 4px 0 6px;
+	scrollbar-width: thin;
+	scrollbar-color: #363650 transparent;
+}
+
+.bl-var-list::-webkit-scrollbar {
+	width: 5px;
+}
+
+.bl-var-list::-webkit-scrollbar-thumb {
+	background: #363650;
+	border-radius: 3px;
+}
+
+/* ---- Groups ---- */
+
+.bl-var-group + .bl-var-group {
+	border-top: 1px solid #24243c;
+	margin-top: 2px;
+	padding-top: 2px;
+}
+
+.bl-var-group-label {
+	padding: 5px 10px 2px;
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.07em;
+	color: #b0b3b6;
+	pointer-events: none;
+	margin-bottom: 1rem;
+}
+
+/* ---- Items ---- */
+
+.bl-var-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	padding: 6px 10px;
+	background: none;
+	border: none;
+	color: var(--builder-color);
+	cursor: pointer;
+	text-align: left;
+	font-size: 16px;
+	white-space: nowrap;
+	overflow: hidden;
+	transition:
+		background 0.1s,
+		color 0.1s;
+}
+
+.bl-var-item:hover,
+.bl-var-item:focus {
+	background: #25254a;
+	color: #ffffff;
+	outline: none;
+}
+
+/* ---- Color swatch ---- */
+
+.bl-var-swatch {
+	display: inline-block;
+	flex-shrink: 0;
+	width: 32px;
+	height: 32px;
+	border-radius: 3px;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* ---- Variable name ---- */
+
+.bl-var-name {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	flex: 1;
+}
+
+/* ---- Empty state ---- */
+
+.bl-var-empty {
+	margin: 0;
+	padding: 16px;
+	text-align: center;
+	color: #52527a;
+	font-style: italic;
+}

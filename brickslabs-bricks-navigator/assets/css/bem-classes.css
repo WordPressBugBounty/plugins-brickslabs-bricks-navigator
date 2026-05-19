@@ -1,0 +1,183 @@
+.bricks-panel button.bl-bem-button {
+	align-items: center;
+	background: transparent;
+	border: 0;
+	border-radius: 3px;
+	color: currentColor;
+	cursor: pointer;
+	display: inline-flex;
+	font: inherit;
+	/* height: 18px; */
+	height: auto;
+	line-height: 1;
+	justify-content: center;
+	/* margin-left: 4px; */
+	margin: 0;
+	opacity: 0.65;
+	padding: 5px;
+	width: 18px;
+}
+
+.bl-bem-button:hover,
+.bl-bem-button:focus {
+	background: rgba(255, 255, 255, 0.1);
+	opacity: 1;
+	outline: none;
+}
+
+.bl-bem-button span {
+	font-size: 10px;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.bl-bem-modal {
+	align-items: center;
+	background: rgba(0, 0, 0, 0.55);
+	display: flex;
+	inset: 0;
+	justify-content: center;
+	position: fixed;
+	z-index: 999999;
+}
+
+.bl-bem-dialog {
+	background: var(--builder-bg);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 6px;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+	color: #f5f7fa;
+	display: grid;
+	gap: 14px;
+	max-height: min(680px, calc(100vh - 48px));
+	padding: 16px;
+	width: min(520px, calc(100vw - 32px));
+}
+
+.bl-bem-header,
+.bl-bem-footer {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+}
+
+.bl-bem-close {
+	background: transparent;
+	border: 0;
+	color: inherit;
+	cursor: pointer;
+	font-size: 22px;
+	height: 28px;
+	line-height: 1;
+	padding: 0;
+	width: 28px;
+}
+
+.bl-bem-field {
+	display: grid;
+	gap: 6px;
+}
+
+.bl-bem-field span {
+	color: #cbd5e1;
+	font-size: 12px;
+}
+
+.bl-bem-input {
+	background: var(--builder-bg-3);
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 4px;
+	color: #fff;
+	font-size: 13px;
+	height: 34px;
+	padding: 0 10px;
+	width: 100%;
+}
+
+.bl-bem-list {
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 4px;
+	max-height: 360px;
+	overflow: auto;
+}
+
+.bl-bem-row {
+	align-items: center;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	display: grid;
+	gap: 8px;
+	grid-template-columns: 16px minmax(100px, 1fr) minmax(130px, auto) auto;
+	min-height: 34px;
+	padding: 6px 8px 6px calc(8px + (var(--depth) * 18px));
+}
+
+.bl-bem-row:last-child {
+	border-bottom: 0;
+}
+
+.bl-bem-row-title {
+	font-size: 12px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.bl-bem-row code {
+	background: rgba(0, 0, 0, 0.25);
+	border-radius: 3px;
+	color: #dbeafe;
+	font-size: 11px;
+	padding: 3px 5px;
+}
+
+.bl-bem-root {
+	background: rgba(59, 130, 246, 0.2);
+	border-radius: 3px;
+	color: #bfdbfe;
+	font-size: 10px;
+	padding: 2px 4px;
+	text-transform: uppercase;
+}
+
+.bl-bem-option {
+	align-items: center;
+	cursor: pointer;
+	display: flex;
+	gap: 8px;
+}
+
+.bl-bem-option input[type='checkbox'] {
+	accent-color: #3b82f6;
+	cursor: pointer;
+	flex-shrink: 0;
+	height: 14px;
+	margin: 0;
+	width: 14px;
+}
+
+.bl-bem-option span {
+	color: #cbd5e1;
+	font-size: 12px;
+}
+
+.bl-bem-primary,
+.bl-bem-secondary {
+	border: 0;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 12px;
+	height: 30px;
+	padding: 0 12px;
+}
+
+.bl-bem-primary {
+	background: #3b82f6;
+	color: #fff;
+	font-weight: bold;
+}
+
+.bl-bem-secondary {
+	background: rgba(255, 255, 255, 0.1);
+	color: #f5f7fa;
+	margin-right: 8px;
+}
