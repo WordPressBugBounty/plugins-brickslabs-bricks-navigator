@@ -4,8 +4,8 @@ Contributors: srikat
 Tags: bricks, bricks builder, admin bar
 Donate link: https://www.paypal.me/sridharkatakam
 Requires at least: 6.0
-Tested up to: 6.8.2
-Stable tag: 1.1.4
+Tested up to: 6.9.4
+Stable tag: 1.1.5
 Requires PHP: 8.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -80,6 +80,13 @@ Search for `bricks navigator` from within your WordPress plugins' Add New page a
 7. Screenshot showing contextual menu (with live preview on hover) for the builder controls.
 
 == Changelog ==
+
+= 1.1.5 ( May 19, 2026 ) =
+* Fixed plugin internationalization: added `Domain Path: /languages` header, created `languages/` directory, and generated `bricks-navigator.pot` so translations from translate.wordpress.org are correctly loaded.
+* Fixed CSS Variables Context Menu: hovering over a variable now previews the value in the canvas without writing to Bricks undo history (only `input` event fires on hover; `change` fires only on click).
+* Fixed CSS Variables Context Menu: context menu now closes when clicking anywhere on the Bricks canvas.
+* Fixed CSS Variables Context Menu: variable scanning now reads from the parent document stylesheets (via `window.parent.document`), picking up all CSS custom properties defined on the page rather than only those visible inside the builder iframe.
+* Fixed external and community admin bar links to include `rel="noopener noreferrer"` on all `target="_blank"` links.
 
 = 1.1.4 ( May 19, 2026 ) =
 * Added CSS Editor enhancement (Beta): inline CSS editor panel in the Bricks element panel with two-way binding between CSS and controls. Editable CSS maps back to layout controls; unmappable properties (color, background, border, etc.) are stored in the element's Custom CSS field.

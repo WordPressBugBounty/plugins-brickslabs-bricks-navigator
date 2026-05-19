@@ -3,10 +3,11 @@
  * Plugin Name:       BricksLabs Bricks Navigator
  * Plugin URI:        https://brickslabs.com/bricks-navigator/
  * Description:       Adds quick links in the WordPress admin bar for users of the Bricks theme.
- * Version:           1.1.4
+ * Version:           1.1.5
  * Author:            Sridhar Katakam
  * Author URI:        https://brickslabs.com/
  * Text Domain:       bricks-navigator
+ * Domain Path:       /languages
  * Requires at least: 6.0
  * Requires PHP:      8.0
  * License:           GPL-2.0-or-later
@@ -21,7 +22,7 @@ if (!defined("ABSPATH")) {
 
 final class Plugin
 {
-    const VERSION = "1.1.4";
+    const VERSION = "1.1.5";
 
     private static ?self $instance = null;
 

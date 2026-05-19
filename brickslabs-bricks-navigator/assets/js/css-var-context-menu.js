@@ -220,11 +220,15 @@
 		var vars = [];
 		var seen = {};
 
+		// The builder runs inside #bricks-builder-iframe; the page's own stylesheets
+		// (and therefore most CSS custom properties) live in the parent document.
+		// window.parent.document gives access to those without any iframe lookup.
 		var sources = [ document ];
-		var iframe  = document.getElementById('bricks-preview');
-		if ( iframe && iframe.contentDocument ) {
-			sources.unshift(iframe.contentDocument);
-		}
+		try {
+			if ( window.parent && window.parent !== window && window.parent.document ) {
+				sources.unshift(window.parent.document);
+			}
+		} catch ( e ) {} // guard against cross-origin edge cases
 
 		sources.forEach( function (doc) {
 			try {
@@ -332,6 +336,7 @@
 	var activeVars         = [];
 	var originalInputValue = null; // value of activeInput before any hover preview
 	var previewCommitted   = false; // true when the user clicked an item
+	var canvasBlurHandler  = null; // window blur handler — fires when click enters the canvas iframe
 
 	function buildMenu() {
 		if ( document.getElementById(MENU_ID) ) {
@@ -430,20 +435,20 @@
 		});
 	}
 
-	// Write varStr into the active input and fire Bricks reactivity events.
+	// Write varStr into the active input and fire only the input event so the
+	// canvas updates live. The change event is intentionally omitted to avoid
+	// dirtying Bricks state or polluting undo history on hover.
 	function applyPreview(varStr) {
 		if ( ! activeInput ) return;
 		activeInput.value = varStr;
-		activeInput.dispatchEvent(new Event('input',  { bubbles: true }));
-		activeInput.dispatchEvent(new Event('change', { bubbles: true }));
+		activeInput.dispatchEvent(new Event('input', { bubbles: true }));
 	}
 
-	// Restore the input to its value at menu-open time.
+	// Restore the input to its value at menu-open time (input-only, no change).
 	function restorePreview() {
 		if ( ! activeInput || originalInputValue === null ) return;
 		activeInput.value = originalInputValue;
-		activeInput.dispatchEvent(new Event('input',  { bubbles: true }));
-		activeInput.dispatchEvent(new Event('change', { bubbles: true }));
+		activeInput.dispatchEvent(new Event('input', { bubbles: true }));
 	}
 
 	function showMenu(e, input, vars) {
@@ -460,7 +465,9 @@
 		menuEl.style.top     = e.clientY + 'px';
 		menuEl.style.display = 'flex';
 
-		// Adjust if off-screen
+		// Adjust if off-screen, then focus the search box and arm the blur handler.
+		// Registering the blur handler inside rAF ensures focus has already settled
+		// on the search input, so the handler won't fire spuriously on menu open.
 		requestAnimationFrame( function () {
 			var rect = menuEl.getBoundingClientRect();
 			if ( rect.right > window.innerWidth - 8 ) {
@@ -470,6 +477,12 @@
 				menuEl.style.top = Math.max(8, e.clientY - rect.height) + 'px';
 			}
 			menuEl.querySelector('.bl-var-search').focus();
+
+			// Clicks inside the canvas iframe don't bubble to the parent document.
+			// When focus shifts into the iframe the parent window fires 'blur', which
+			// is the only reliable cross-document signal for an iframe click.
+			canvasBlurHandler = function () { hideMenu(); };
+			window.addEventListener('blur', canvasBlurHandler);
 		});
 	}
 
@@ -479,6 +492,11 @@
 		activeInput        = null;
 		originalInputValue = null;
 		previewCommitted   = false;
+
+		if ( canvasBlurHandler ) {
+			window.removeEventListener('blur', canvasBlurHandler);
+			canvasBlurHandler = null;
+		}
 	}
 
 	function insertVariable(varStr) {

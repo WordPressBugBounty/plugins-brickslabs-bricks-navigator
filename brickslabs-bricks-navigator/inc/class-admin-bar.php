@@ -285,6 +285,7 @@ final class Admin_Bar {
 				'href'   => $item['href'],
 				'meta'   => array_filter( [
 					'target' => '_blank',
+					'rel'    => 'noopener noreferrer',
 					'class'  => $class,
 				] ),
 			] );
@@ -355,7 +356,7 @@ final class Admin_Bar {
 				'title'  => $item['label'],
 				'parent' => 'bn-bricks-community',
 				'href'   => $item['href'],
-				'meta'   => [ 'target' => '_blank' ],
+				'meta'   => [ 'target' => '_blank', 'rel' => 'noopener noreferrer' ],
 			] );
 
 			foreach ( $item['children'] ?? [] as $child_id => $child ) {
@@ -364,7 +365,7 @@ final class Admin_Bar {
 					'title'  => $child['label'],
 					'parent' => "bn-bricks-{$id}",
 					'href'   => $child['href'],
-					'meta'   => [ 'target' => '_blank' ],
+					'meta'   => [ 'target' => '_blank', 'rel' => 'noopener noreferrer' ],
 				] );
 			}
 		}
