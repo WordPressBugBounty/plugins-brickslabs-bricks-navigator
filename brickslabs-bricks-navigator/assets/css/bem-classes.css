@@ -1,6 +1,8 @@
 .bricks-panel button.bl-bem-button {
 	align-items: center;
 	background: transparent;
+	/* background: var(--builder-color-accent);
+	color: var(--builder-color-accent-inverse); */
 	border: 0;
 	border-radius: 3px;
 	color: currentColor;
@@ -13,15 +15,15 @@
 	justify-content: center;
 	/* margin-left: 4px; */
 	margin: 0;
-	opacity: 0.65;
+	/* opacity: 0.65; */
 	padding: 5px;
 	width: 18px;
 }
 
-.bl-bem-button:hover,
-.bl-bem-button:focus {
-	background: rgba(255, 255, 255, 0.1);
-	opacity: 1;
+.bricks-panel button.bl-bem-button:hover,
+.bricks-panel button.bl-bem-button:focus {
+	/* background: rgba(255, 255, 255, 0.1); */
+	/* opacity: 1; */
 	outline: none;
 }
 
@@ -92,6 +94,7 @@
 	height: 34px;
 	padding: 0 10px;
 	width: 100%;
+	font-weight: 600;
 }
 
 .bl-bem-list {
@@ -109,6 +112,15 @@
 	grid-template-columns: 16px minmax(100px, 1fr) minmax(130px, auto) auto;
 	min-height: 34px;
 	padding: 6px 8px 6px calc(8px + (var(--depth) * 18px));
+	background: var(--builder-bg-2);
+}
+
+.bl-bem-row.is-excluded {
+	opacity: 0.4;
+}
+
+.bl-bem-row.is-excluded code {
+	text-decoration: line-through;
 }
 
 .bl-bem-row:last-child {
@@ -120,14 +132,17 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	padding-left: 16px;
+	color: var(--bricks-border-color);
 }
 
 .bl-bem-row code {
 	background: rgba(0, 0, 0, 0.25);
 	border-radius: 3px;
 	color: #dbeafe;
-	font-size: 11px;
-	padding: 3px 5px;
+	font-size: 13px;
+	padding: 3px 8px;
+	font-weight: 600;
 }
 
 .bl-bem-root {
@@ -180,4 +195,41 @@
 	background: rgba(255, 255, 255, 0.1);
 	color: #f5f7fa;
 	margin-right: 8px;
+}
+
+/* Light mode */
+
+[data-builder-mode='light'] {
+	& .bl-bem-primary {
+		background: var(--builder-color-accent);
+	}
+
+	& .bl-bem-secondary {
+		background: var(--builder-bg-2);
+		color: var(--builder-color);
+	}
+
+	& .bl-bem-dialog {
+		color: var(--builder-gray-2);
+	}
+
+	& .bl-bem-field span,
+	& .bl-bem-option span {
+		color: var(--builder-color);
+	}
+
+	& .bl-bem-input {
+		background: var(--builder-bg-2);
+		color: var(--builder-color);
+	}
+
+	& .bl-bem-row code {
+		background: var(--builder-bg-3);
+		color: var(--builder-color);
+	}
+
+	& .bl-bem-root,
+	& .bl-bem-row-title {
+		color: var(--builder-color);
+	}
 }

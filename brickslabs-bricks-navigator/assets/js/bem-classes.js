@@ -370,7 +370,7 @@
 			'</label>' +
 			'<div class="bl-bem-list"></div>' +
 			'<label class="bl-bem-option">' +
-			'<input type="checkbox" class="bl-bem-move-styles">' +
+			'<div data-control="checkbox"><input type="checkbox" class="bl-bem-move-styles"></div>' +
 			'<span>Move ID styles to classes</span>' +
 			'</label>' +
 			'<div class="bl-bem-footer">' +
@@ -395,9 +395,9 @@
 					'<label class="bl-bem-row" style="--depth:' +
 					row.depth +
 					'">' +
-					'<input type="checkbox" data-id="' +
+					'<div data-control="checkbox"><input type="checkbox" data-id="' +
 					escapeHtml(row.id) +
-					'" checked>' +
+					'" checked></div>' +
 					'<span class="bl-bem-row-title">' +
 					escapeHtml(row.label) +
 					'</span>' +
@@ -409,6 +409,14 @@
 				);
 			})
 			.join('');
+
+		// Keep .is-excluded on each row in sync with its checkbox.
+		list.addEventListener('change', function (event) {
+			var cb = event.target;
+			if (cb.tagName !== 'INPUT' || cb.type !== 'checkbox') return;
+			var row = cb.closest('.bl-bem-row');
+			if (row) row.classList.toggle('is-excluded', !cb.checked);
+		});
 
 		// On block-name input, only patch the <code> text — never touch checkboxes.
 		input.addEventListener('input', function () {

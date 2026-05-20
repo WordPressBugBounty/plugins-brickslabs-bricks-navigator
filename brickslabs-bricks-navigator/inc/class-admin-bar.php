@@ -55,7 +55,7 @@ final class Admin_Bar {
 
 		$this->bar->add_node( [
 			'id'    => 'bn-bricks',
-			'title' => $icon . esc_html__( 'Bricks', 'bricks-navigator' ),
+			'title' => $icon . esc_html__( 'Bricks', 'brickslabs-bricks-navigator' ),
 			'href'  => esc_url( admin_url( 'themes.php?page=bricks' ) ),
 		] );
 	}
@@ -67,20 +67,20 @@ final class Admin_Bar {
 	private function add_settings_nodes(): void {
 		$this->bar->add_node( [
 			'id'     => 'bn-bricks-settings',
-			'title'  => __( 'Settings', 'bricks-navigator' ),
+			'title'  => __( 'Settings', 'brickslabs-bricks-navigator' ),
 			'parent' => 'bn-bricks',
 			'href'   => admin_url( 'admin.php?page=bricks-settings' ),
 		] );
 
 		$tabs = [
-			'general'          => [ 'label' => __( 'General', 'bricks-navigator' ),          'hash' => '' ],
-			'builder-access'   => [ 'label' => __( 'Builder Access', 'bricks-navigator' ),   'hash' => '#tab-builder-access' ],
-			'templates'        => [ 'label' => __( 'Templates', 'bricks-navigator' ),        'hash' => '#tab-templates' ],
-			'builder'          => [ 'label' => __( 'Builder', 'bricks-navigator' ),          'hash' => '#tab-builder' ],
-			'performance'      => [ 'label' => __( 'Performance', 'bricks-navigator' ),      'hash' => '#tab-performance' ],
-			'maintenance-mode' => [ 'label' => __( 'Maintenance Mode', 'bricks-navigator' ), 'hash' => '#tab-maintenance' ],
-			'api-keys'         => [ 'label' => __( 'API Keys', 'bricks-navigator' ),         'hash' => '#tab-api-keys' ],
-			'custom-code'      => [ 'label' => __( 'Custom Code', 'bricks-navigator' ),      'hash' => '#tab-custom-code' ],
+			'general'          => [ 'label' => __( 'General', 'brickslabs-bricks-navigator' ),          'hash' => '' ],
+			'builder-access'   => [ 'label' => __( 'Builder Access', 'brickslabs-bricks-navigator' ),   'hash' => '#tab-builder-access' ],
+			'templates'        => [ 'label' => __( 'Templates', 'brickslabs-bricks-navigator' ),        'hash' => '#tab-templates' ],
+			'builder'          => [ 'label' => __( 'Builder', 'brickslabs-bricks-navigator' ),          'hash' => '#tab-builder' ],
+			'performance'      => [ 'label' => __( 'Performance', 'brickslabs-bricks-navigator' ),      'hash' => '#tab-performance' ],
+			'maintenance-mode' => [ 'label' => __( 'Maintenance Mode', 'brickslabs-bricks-navigator' ), 'hash' => '#tab-maintenance' ],
+			'api-keys'         => [ 'label' => __( 'API Keys', 'brickslabs-bricks-navigator' ),         'hash' => '#tab-api-keys' ],
+			'custom-code'      => [ 'label' => __( 'Custom Code', 'brickslabs-bricks-navigator' ),      'hash' => '#tab-custom-code' ],
 		];
 
 		foreach ( $tabs as $id => $tab ) {
@@ -91,7 +91,7 @@ final class Admin_Bar {
 				$tab['label'],
 				$url,
 				/* translators: %s: settings tab name */
-				sprintf( __( 'Bricks Settings → %s in a new tab', 'bricks-navigator' ), $tab['label'] )
+				sprintf( __( 'Bricks Settings → %s in a new tab', 'brickslabs-bricks-navigator' ), $tab['label'] )
 			);
 		}
 
@@ -101,9 +101,9 @@ final class Admin_Bar {
 			$this->add_item_with_new_tab(
 				'bn-bricks-settings-woocommerce',
 				'bn-bricks-settings',
-				__( 'WooCommerce', 'bricks-navigator' ),
+				__( 'WooCommerce', 'brickslabs-bricks-navigator' ),
 				$url,
-				__( 'Bricks Settings → WooCommerce in a new tab', 'bricks-navigator' )
+				__( 'Bricks Settings → WooCommerce in a new tab', 'brickslabs-bricks-navigator' )
 			);
 		}
 	}
@@ -115,7 +115,7 @@ final class Admin_Bar {
 	private function add_templates_nodes(): void {
 		$this->bar->add_node( [
 			'id'     => 'bn-bricks-templates',
-			'title'  => __( 'Templates', 'bricks-navigator' ),
+			'title'  => __( 'Templates', 'brickslabs-bricks-navigator' ),
 			'parent' => 'bn-bricks',
 			'href'   => admin_url( 'edit.php?post_type=bricks_template' ),
 			'meta'   => [ 'class' => 'bn-has-top-border' ],
@@ -126,9 +126,9 @@ final class Admin_Bar {
 		$this->add_item_with_new_tab(
 			'bn-bricks-add-new-template',
 			'bn-bricks-templates',
-			__( 'Add New', 'bricks-navigator' ),
+			__( 'Add New', 'brickslabs-bricks-navigator' ),
 			$new_url,
-			__( 'Add New template in a new tab', 'bricks-navigator' ),
+			__( 'Add New template in a new tab', 'brickslabs-bricks-navigator' ),
 			'bn-parent-of-mini-child bn-has-bottom-border'
 		);
 
@@ -152,7 +152,7 @@ final class Admin_Bar {
 				'parent' => 'bn-bricks-templates',
 				'href'   => esc_url( $edit_url ),
 				'meta'   => [
-					'title' => __( 'Edit this Template with Bricks', 'bricks-navigator' ),
+					'title' => __( 'Edit this Template with Bricks', 'brickslabs-bricks-navigator' ),
 					'class' => 'bn-parent-of-mini-child',
 				],
 			] );
@@ -165,7 +165,7 @@ final class Admin_Bar {
 				'meta'   => [
 					'target' => '_blank',
 					'rel'    => 'noopener noreferrer',
-					'title'  => __( 'Edit this Template with Bricks in a new tab', 'bricks-navigator' ),
+					'title'  => __( 'Edit this Template with Bricks in a new tab', 'brickslabs-bricks-navigator' ),
 					'class'  => 'bn-mini-child bn-mini-child-new-tab',
 				],
 			] );
@@ -179,7 +179,7 @@ final class Admin_Bar {
 	private function add_pages_nodes(): void {
 		$this->bar->add_node( [
 			'id'     => 'bn-bricks-pages',
-			'title'  => __( 'Pages', 'bricks-navigator' ),
+			'title'  => __( 'Pages', 'brickslabs-bricks-navigator' ),
 			'parent' => 'bn-bricks',
 			'href'   => admin_url( 'edit.php?post_type=page' ),
 			'meta'   => [ 'class' => 'bn-has-top-border' ],
@@ -205,7 +205,7 @@ final class Admin_Bar {
 				'parent' => 'bn-bricks-pages',
 				'href'   => esc_url( $edit_url ),
 				'meta'   => [
-					'title' => __( 'Edit this Page with Bricks', 'bricks-navigator' ),
+					'title' => __( 'Edit this Page with Bricks', 'brickslabs-bricks-navigator' ),
 					'class' => 'bn-parent-of-mini-child',
 				],
 			] );
@@ -218,7 +218,7 @@ final class Admin_Bar {
 				'meta'   => [
 					'target' => '_blank',
 					'rel'    => 'noopener noreferrer',
-					'title'  => __( 'Edit this Page with Bricks in a new tab', 'bricks-navigator' ),
+					'title'  => __( 'Edit this Page with Bricks in a new tab', 'brickslabs-bricks-navigator' ),
 					'class'  => 'bn-mini-child bn-mini-child-new-tab',
 				],
 			] );
@@ -233,18 +233,18 @@ final class Admin_Bar {
 		$this->add_item_with_new_tab(
 			'bn-bricks-dashboard',
 			'bn-bricks',
-			__( 'Getting Started', 'bricks-navigator' ),
+			__( 'Getting Started', 'brickslabs-bricks-navigator' ),
 			admin_url( 'themes.php?page=bricks' ),
-			__( 'Getting Started in a new tab', 'bricks-navigator' ),
+			__( 'Getting Started in a new tab', 'brickslabs-bricks-navigator' ),
 			'bn-parent-of-mini-child bn-has-top-border'
 		);
 
 		$internals = [
-			'custom-fonts'      => [ 'label' => __( 'Custom Fonts', 'bricks-navigator' ),      'href' => admin_url( 'edit.php?post_type=bricks_fonts' ) ],
-			'form-submissions'  => [ 'label' => __( 'Form Submissions', 'bricks-navigator' ),  'href' => admin_url( 'admin.php?page=bricks-form-submissions' ) ],
-			'sidebars'          => [ 'label' => __( 'Sidebars', 'bricks-navigator' ),          'href' => admin_url( 'admin.php?page=bricks-sidebars' ) ],
-			'system-info'       => [ 'label' => __( 'System Information', 'bricks-navigator' ), 'href' => admin_url( 'admin.php?page=bricks-system-information' ) ],
-			'license'           => [ 'label' => __( 'License', 'bricks-navigator' ),           'href' => admin_url( 'admin.php?page=bricks-license' ) ],
+			'custom-fonts'      => [ 'label' => __( 'Custom Fonts', 'brickslabs-bricks-navigator' ),      'href' => admin_url( 'edit.php?post_type=bricks_fonts' ) ],
+			'form-submissions'  => [ 'label' => __( 'Form Submissions', 'brickslabs-bricks-navigator' ),  'href' => admin_url( 'admin.php?page=bricks-form-submissions' ) ],
+			'sidebars'          => [ 'label' => __( 'Sidebars', 'brickslabs-bricks-navigator' ),          'href' => admin_url( 'admin.php?page=bricks-sidebars' ) ],
+			'system-info'       => [ 'label' => __( 'System Information', 'brickslabs-bricks-navigator' ), 'href' => admin_url( 'admin.php?page=bricks-system-information' ) ],
+			'license'           => [ 'label' => __( 'License', 'brickslabs-bricks-navigator' ),           'href' => admin_url( 'admin.php?page=bricks-license' ) ],
 		];
 
 		foreach ( $internals as $id => $item ) {
@@ -254,7 +254,7 @@ final class Admin_Bar {
 				$item['label'],
 				$item['href'],
 				/* translators: %s: page name */
-				sprintf( __( '%s in a new tab', 'bricks-navigator' ), $item['label'] )
+				sprintf( __( '%s in a new tab', 'brickslabs-bricks-navigator' ), $item['label'] )
 			);
 		}
 	}
@@ -265,15 +265,15 @@ final class Admin_Bar {
 
 	private function add_external_nodes(): void {
 		$externals = [
-			'idea-board'    => [ 'label' => __( 'Idea Board', 'bricks-navigator' ),     'href' => 'https://bricksbuilder.io/ideas/',                          'first' => true ],
-			'roadmap'       => [ 'label' => __( 'Roadmap', 'bricks-navigator' ),        'href' => 'https://bricksbuilder.io/roadmap/' ],
-			'changelog'     => [ 'label' => __( 'Changelog', 'bricks-navigator' ),      'href' => 'https://bricksbuilder.io/changelog/' ],
-			'academy'       => [ 'label' => __( 'Academy', 'bricks-navigator' ),        'href' => 'https://academy.bricksbuilder.io/' ],
-			'academy-preview'       => [ 'label' => __( 'Academy Preview', 'bricks-navigator' ),        'href' => 'https://academy-preview.bricksbuilder.io/' ],
-			'forum'         => [ 'label' => __( 'Forum', 'bricks-navigator' ),          'href' => 'https://forum.bricksbuilder.io/' ],
-			'facebook-group'=> [ 'label' => __( 'Facebook Group', 'bricks-navigator' ), 'href' => 'https://www.facebook.com/groups/brickscommunity' ],
-			'youtube'       => [ 'label' => __( 'YouTube Channel', 'bricks-navigator' ),'href' => 'https://www.youtube.com/c/bricksbuilder/videos' ],
-			'experts'       => [ 'label' => __( 'Bricks Experts', 'bricks-navigator' ), 'href' => 'https://bricksbuilder.io/experts/' ],
+			'idea-board'    => [ 'label' => __( 'Idea Board', 'brickslabs-bricks-navigator' ),     'href' => 'https://bricksbuilder.io/ideas/',                          'first' => true ],
+			'roadmap'       => [ 'label' => __( 'Roadmap', 'brickslabs-bricks-navigator' ),        'href' => 'https://bricksbuilder.io/roadmap/' ],
+			'changelog'     => [ 'label' => __( 'Changelog', 'brickslabs-bricks-navigator' ),      'href' => 'https://bricksbuilder.io/changelog/' ],
+			'academy'       => [ 'label' => __( 'Academy', 'brickslabs-bricks-navigator' ),        'href' => 'https://academy.bricksbuilder.io/' ],
+			'academy-preview'       => [ 'label' => __( 'Academy Preview', 'brickslabs-bricks-navigator' ),        'href' => 'https://academy-preview.bricksbuilder.io/' ],
+			'forum'         => [ 'label' => __( 'Forum', 'brickslabs-bricks-navigator' ),          'href' => 'https://forum.bricksbuilder.io/' ],
+			'facebook-group'=> [ 'label' => __( 'Facebook Group', 'brickslabs-bricks-navigator' ), 'href' => 'https://www.facebook.com/groups/brickscommunity' ],
+			'youtube'       => [ 'label' => __( 'YouTube Channel', 'brickslabs-bricks-navigator' ),'href' => 'https://www.youtube.com/c/bricksbuilder/videos' ],
+			'experts'       => [ 'label' => __( 'Bricks Experts', 'brickslabs-bricks-navigator' ), 'href' => 'https://bricksbuilder.io/experts/' ],
 		];
 
 		foreach ( $externals as $id => $item ) {
@@ -299,53 +299,53 @@ final class Admin_Bar {
 	private function add_community_nodes(): void {
 		$this->bar->add_node( [
 			'id'     => 'bn-bricks-community',
-			'title'  => __( 'Community', 'bricks-navigator' ),
+			'title'  => __( 'Community', 'brickslabs-bricks-navigator' ),
 			'parent' => 'bn-bricks',
 			'meta'   => [ 'class' => 'bn-has-top-border' ],
 		] );
 
 		$community = [
 			'advanced-themer' => [
-				'label'    => __( 'Advanced Themer', 'bricks-navigator' ),
+				'label'    => __( 'Advanced Themer', 'brickslabs-bricks-navigator' ),
 				'href'     => 'https://advancedthemer.com/',
 				'children' => [
-					'advanced-themer-fb-grp' => [ 'label' => __( 'AT Facebook Group', 'bricks-navigator' ), 'href' => 'https://www.facebook.com/groups/advancedthemercommunity/' ],
+					'advanced-themer-fb-grp' => [ 'label' => __( 'AT Facebook Group', 'brickslabs-bricks-navigator' ), 'href' => 'https://www.facebook.com/groups/advancedthemercommunity/' ],
 				],
 			],
 			'bricksextras' => [
-				'label'    => __( 'BricksExtras', 'bricks-navigator' ),
+				'label'    => __( 'BricksExtras', 'brickslabs-bricks-navigator' ),
 				'href'     => 'https://bricksextras.com/',
 				'children' => [
-					'bricksextras-fb-grp' => [ 'label' => __( 'BE Facebook Group', 'bricks-navigator' ), 'href' => 'https://www.facebook.com/groups/bricksextras/' ],
+					'bricksextras-fb-grp' => [ 'label' => __( 'BE Facebook Group', 'brickslabs-bricks-navigator' ), 'href' => 'https://www.facebook.com/groups/bricksextras/' ],
 				],
 			],
 			'bricksforge' => [
-				'label' => __( 'Bricksforge', 'bricks-navigator' ),
+				'label' => __( 'Bricksforge', 'brickslabs-bricks-navigator' ),
 				'href'  => 'https://bricksforge.io/',
 				'children' => [
-					'bricksforge-fb-grp' => [ 'label' => __( 'BF Facebook Group', 'bricks-navigator' ), 'href' => 'https://www.facebook.com/groups/bricksforge/' ],
+					'bricksforge-fb-grp' => [ 'label' => __( 'BF Facebook Group', 'brickslabs-bricks-navigator' ), 'href' => 'https://www.facebook.com/groups/bricksforge/' ],
 				],
 			],
 			'brickslabs' => [
-				'label'    => __( 'BricksLabs', 'bricks-navigator' ),
+				'label'    => __( 'BricksLabs', 'brickslabs-bricks-navigator' ),
 				'href'     => 'https://brickslabs.com/',
 				'children' => [
-					'brickslabs-fb-grp' => [ 'label' => __( 'BL Facebook Group', 'bricks-navigator' ), 'href' => 'https://www.facebook.com/groups/brickslabs/' ],
+					'brickslabs-fb-grp' => [ 'label' => __( 'BL Facebook Group', 'brickslabs-bricks-navigator' ), 'href' => 'https://www.facebook.com/groups/brickslabs/' ],
 				],
 			],
 			'brickslinks' => [
-				'label'    => __( 'Bricks Links', 'bricks-navigator' ),
+				'label'    => __( 'Bricks Links', 'brickslabs-bricks-navigator' ),
 				'href'     => 'https://start.me/p/MbxMGe/bricks-links',
 			],
 			'core-framework' => [
-				'label' => __( 'Core Framework', 'bricks-navigator' ),
+				'label' => __( 'Core Framework', 'brickslabs-bricks-navigator' ),
 				'href'  => 'https://coreframework.com/',
 				'children' => [
-					'core-framework-fb-grp' => [ 'label' => __( 'CF Facebook Group', 'bricks-navigator' ), 'href' => 'https://www.facebook.com/groups/coreframework/' ],
+					'core-framework-fb-grp' => [ 'label' => __( 'CF Facebook Group', 'brickslabs-bricks-navigator' ), 'href' => 'https://www.facebook.com/groups/coreframework/' ],
 				],
 			],
 			'discord' => [
-				'label' => __( 'Discord Chat', 'bricks-navigator' ),
+				'label' => __( 'Discord Chat', 'brickslabs-bricks-navigator' ),
 				'href'  => 'https://discord.gg/bricks',
 			],
 		];
@@ -378,7 +378,7 @@ final class Admin_Bar {
 	private function add_plugin_nodes(): void {
 		$this->bar->add_node( [
 			'id'     => 'bn-bricks-plugin-settings',
-			'title'  => __( 'Plugin Settings', 'bricks-navigator' ),
+			'title'  => __( 'Plugin Settings', 'brickslabs-bricks-navigator' ),
 			'parent' => 'bn-bricks',
 			'meta'   => [ 'class' => 'bn-has-top-border' ],
 		] );
@@ -387,30 +387,30 @@ final class Admin_Bar {
 			[
 				'class'  => '\Advanced_Themer_Bricks\AT__Init',
 				'id'     => 'bn-bricks-at-settings',
-				'label'  => __( 'AT (Theme Settings)', 'bricks-navigator' ),
+				'label'  => __( 'AT (Theme Settings)', 'brickslabs-bricks-navigator' ),
 				'href'   => admin_url( 'admin.php?page=bricks-advanced-themer' ),
-				'new_tab_label' => __( 'Advanced Themer settings in a new tab', 'bricks-navigator' ),
+				'new_tab_label' => __( 'Advanced Themer settings in a new tab', 'brickslabs-bricks-navigator' ),
 			],
 			[
 				'class'  => '\BricksExtras\BricksExtrasMain',
 				'id'     => 'bn-bricks-bricksextras',
-				'label'  => __( 'BricksExtras', 'bricks-navigator' ),
+				'label'  => __( 'BricksExtras', 'brickslabs-bricks-navigator' ),
 				'href'   => admin_url( 'admin.php?page=bricksextras_menu' ),
-				'new_tab_label' => __( 'BricksExtras settings in a new tab', 'bricks-navigator' ),
+				'new_tab_label' => __( 'BricksExtras settings in a new tab', 'brickslabs-bricks-navigator' ),
 			],
 			[
 				'class'  => 'Bricksforge',
 				'id'     => 'bn-bricks-bricksforge-settings',
-				'label'  => __( 'Bricksforge', 'bricks-navigator' ),
+				'label'  => __( 'Bricksforge', 'brickslabs-bricks-navigator' ),
 				'href'   => admin_url( 'admin.php?page=bricksforge' ),
-				'new_tab_label' => __( 'Bricksforge settings in a new tab', 'bricks-navigator' ),
+				'new_tab_label' => __( 'Bricksforge settings in a new tab', 'brickslabs-bricks-navigator' ),
 			],
 			[
 				'class'  => '\CoreFramework\Config\Plugin',
 				'id'     => 'bn-bricks-cf-settings',
-				'label'  => __( 'Core Framework', 'bricks-navigator' ),
+				'label'  => __( 'Core Framework', 'brickslabs-bricks-navigator' ),
 				'href'   => admin_url( 'admin.php?page=core-framework' ),
-				'new_tab_label' => __( 'Core Framework settings in a new tab', 'bricks-navigator' ),
+				'new_tab_label' => __( 'Core Framework settings in a new tab', 'brickslabs-bricks-navigator' ),
 			],
 		];
 
@@ -431,9 +431,9 @@ final class Admin_Bar {
 		$this->add_item_with_new_tab(
 			'bn-bricks-navigator-settings',
 			'bn-bricks-plugin-settings',
-			__( 'Bricks Navigator', 'bricks-navigator' ),
+			__( 'Bricks Navigator', 'brickslabs-bricks-navigator' ),
 			admin_url( 'admin.php?page=brickslabs-bricks-navigator' ),
-			__( 'Bricks Navigator settings in a new tab', 'bricks-navigator' )
+			__( 'Bricks Navigator settings in a new tab', 'brickslabs-bricks-navigator' )
 		);
 	}
 

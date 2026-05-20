@@ -5,7 +5,7 @@ Tags: bricks, bricks builder, admin bar
 Donate link: https://www.paypal.me/sridharkatakam
 Requires at least: 6.0
 Tested up to: 6.9.4
-Stable tag: 1.1.5
+Stable tag: 1.1.6
 Requires PHP: 8.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -13,6 +13,8 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Adds quick links in the WordPress admin bar for users of Bricks theme.
 
 == Description ==
+
+=== Main function ===
 
 This plugin adds a handy "Bricks" menu item in the WP admin bar for directly editing Pages and Templates with Bricks, as well as quickly navigating to various areas within the site and external sites relevant for the users of [Bricks Builder theme](https://bricksbuilder.io/).
 
@@ -32,15 +34,23 @@ Built for the Bricks community by Sridhar Katakam of [BricksLabs](https://bricks
 
 Performance Notice: The free version loads all templates and pages in the menu and works best for smaller sites (up to ~20 templates and ~50 pages). For larger sites with extensive content, consider upgrading to our upcoming Pro version for better performance. Note that this only applies for admins and other logged-in users for whom the WP toolbar shows.
 
----
+=== Auto-select Class ===
 
-New in v1.1.4:
+Provides a checkbox so that when an element with a CSS class is selected in the editor, the first unlocked class in the classes panel is automatically activated.
 
-- CSS Editor (Beta): an inline CSS editor panel in the Bricks element panel with two-way binding between CSS and controls. Editable CSS maps back to layout controls; unmappable properties are stored in the element's Custom CSS field.
-- BEM Classes: a BEM class action on each structure panel layer to assign global classes in BEM format with a checkbox to move ID styles to the class.
-- CSS Variables Context Menu: right-click any CSS value input in the Bricks editor to insert a CSS variable from your registered custom properties - with live preview on hover.
+=== CSS Editor (Beta) ===
 
-New in v1.1.3 is the Enhancements section in the settings page, which includes the Auto-select Class and Single Keyboard Shortcuts features.
+An inline collapsible CSS editor panel in the Bricks element panel with two-way binding between CSS and controls. Editable CSS maps back to layout controls; unmappable properties are stored in the element's Custom CSS field.
+
+=== BEM Classes (Beta) ===
+
+A BEM class action on each structure panel layer to assign global classes in BEM format with a checkbox to move ID styles to the class.
+
+=== CSS Variables Context Menu (Beta) ===
+
+Right-click any CSS value input in the Bricks editor to insert a CSS variable from your registered custom properties - with live preview on hover.
+
+=== Keyboard Shortcuts ===
 
 Adding common elements in Bricks editor is now a single key-press away.
 
@@ -80,6 +90,11 @@ Search for `bricks navigator` from within your WordPress plugins' Add New page a
 7. Screenshot showing contextual menu (with live preview on hover) for the builder controls.
 
 == Changelog ==
+
+= 1.1.6 ( May 20, 2026 ) =
+* Fixed translations not loading: text domain renamed from `bricks-navigator` to `brickslabs-bricks-navigator` to match the plugin slug, which is how WordPress names downloaded language pack files.
+* Fixed translations not loading for users whose profile language differs from the site language: `load_plugin_textdomain()` moved from `plugins_loaded` to `init` (priority 1) so the effective locale is fully resolved before the translation file is looked up.
+* Fixed BEM Classes dialog styling in Bricks light mode.
 
 = 1.1.5 ( May 19, 2026 ) =
 * Fixed plugin internationalization: added `Domain Path: /languages` header, created `languages/` directory, and generated `bricks-navigator.pot` so translations from translate.wordpress.org are correctly loaded.

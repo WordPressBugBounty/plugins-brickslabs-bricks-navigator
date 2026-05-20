@@ -72,8 +72,8 @@ final class Settings {
 	public function add_settings_page(): void {
 		$hook = add_submenu_page(
 			'bricks',
-			__( 'Bricks Navigator Settings', 'bricks-navigator' ),
-			__( 'Bricks Navigator', 'bricks-navigator' ),
+			__( 'Bricks Navigator Settings', 'brickslabs-bricks-navigator' ),
+			__( 'Bricks Navigator', 'brickslabs-bricks-navigator' ),
 			'manage_options',
 			'brickslabs-bricks-navigator',
 			[ $this, 'render_page' ]
@@ -101,7 +101,7 @@ final class Settings {
 			add_settings_error(
 				'brickslabs_bricks_navigator_messages',
 				'brickslabs_bricks_navigator_message',
-				__( 'Settings Saved', 'bricks-navigator' ),
+				__( 'Settings Saved', 'brickslabs-bricks-navigator' ),
 				'updated'
 			);
 		}
@@ -110,7 +110,7 @@ final class Settings {
 			<div class="settings-header">
 				<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 				<p class="description">
-					<?php esc_html_e( 'Configure how the Bricks Navigator menu appears in your admin bar in addition to the core menu items - Settings, Templates and Pages', 'bricks-navigator' ); ?>
+					<?php esc_html_e( 'Configure how the Bricks Navigator menu appears in your admin bar in addition to the core menu items - Settings, Templates and Pages', 'brickslabs-bricks-navigator' ); ?>
 				</p>
 			</div>
 
@@ -120,7 +120,7 @@ final class Settings {
 				<?php
 				settings_fields( 'brickslabs-bricks-navigator' );
 				do_settings_sections( 'brickslabs-bricks-navigator' );
-				submit_button( __( 'Save Settings', 'bricks-navigator' ) );
+				submit_button( __( 'Save Settings', 'brickslabs-bricks-navigator' ) );
 				?>
 			</form>
 		</div>
@@ -135,113 +135,113 @@ final class Settings {
 		// General Settings section.
 		add_settings_section(
 			'brickslabs_bricks_navigator_general',
-			__( 'General Settings', 'bricks-navigator' ),
+			__( 'General Settings', 'brickslabs-bricks-navigator' ),
 			null,
 			'brickslabs-bricks-navigator'
 		);
 
 		$this->add_toggle(
 			'brickslabs_bricks_navigator_show_in_editor',
-			__( 'Admin bar in Bricks Editor', 'bricks-navigator' ),
+			__( 'Admin bar in Bricks Editor', 'brickslabs-bricks-navigator' ),
 			'brickslabs_bricks_navigator_general',
 			false,
-			__( 'Show the admin bar in the Bricks editor interface', 'bricks-navigator' )
+			__( 'Show the admin bar in the Bricks editor interface', 'brickslabs-bricks-navigator' )
 		);
 
 		// Menu Items section.
 		add_settings_section(
 			'brickslabs_bricks_navigator_menu',
-			__( 'Menu Items', 'bricks-navigator' ),
+			__( 'Menu Items', 'brickslabs-bricks-navigator' ),
 			null,
 			'brickslabs-bricks-navigator'
 		);
 
 		$this->add_toggle(
 			'brickslabs_bricks_navigator_show_community_menu',
-			__( 'Community Menu', 'bricks-navigator' ),
+			__( 'Community Menu', 'brickslabs-bricks-navigator' ),
 			'brickslabs_bricks_navigator_menu',
 			false,
-			__( 'Show the Community menu items', 'bricks-navigator' )
+			__( 'Show the Community menu items', 'brickslabs-bricks-navigator' )
 		);
 
 		$this->add_toggle(
 			'brickslabs_bricks_navigator_show_bricks_internal',
-			__( 'Internal Bricks Links', 'bricks-navigator' ),
+			__( 'Internal Bricks Links', 'brickslabs-bricks-navigator' ),
 			'brickslabs_bricks_navigator_menu',
 			false,
-			__( 'Show internal Bricks links (Getting Started, Custom Fonts, Form Submissions, Sidebars, System Information, License)', 'bricks-navigator' )
+			__( 'Show internal Bricks links (Getting Started, Custom Fonts, Form Submissions, Sidebars, System Information, License)', 'brickslabs-bricks-navigator' )
 		);
 
 		$this->add_toggle(
 			'brickslabs_bricks_navigator_show_bricks_external',
-			__( 'External Bricks Links', 'bricks-navigator' ),
+			__( 'External Bricks Links', 'brickslabs-bricks-navigator' ),
 			'brickslabs_bricks_navigator_menu',
 			false,
-			__( 'Show external Bricks links (Idea Board, Roadmap, Changelog, Academy, Forum, Facebook Group, YouTube Channel, Bricks Experts)', 'bricks-navigator' )
+			__( 'Show external Bricks links (Idea Board, Roadmap, Changelog, Academy, Forum, Facebook Group, YouTube Channel, Bricks Experts)', 'brickslabs-bricks-navigator' )
 		);
 
 		$this->add_toggle(
 			'brickslabs_bricks_navigator_show_thirdparty_plugins',
-			__( 'Plugin Settings', 'bricks-navigator' ),
+			__( 'Plugin Settings', 'brickslabs-bricks-navigator' ),
 			'brickslabs_bricks_navigator_menu',
 			true,
-			__( 'Show third-party plugin settings in the menu', 'bricks-navigator' )
+			__( 'Show third-party plugin settings in the menu', 'brickslabs-bricks-navigator' )
 		);
 
 		// Enhancements section.
 		add_settings_section(
 			'brickslabs_bricks_navigator_enhancements',
-			__( 'Enhancements', 'bricks-navigator' ),
+			__( 'Enhancements', 'brickslabs-bricks-navigator' ),
 			[ $this, 'render_enhancements_section_description' ],
 			'brickslabs-bricks-navigator'
 		);
 
 		$this->add_toggle(
 			'brickslabs_bricks_navigator_auto_select_class',
-			__( 'Auto-select Class', 'bricks-navigator' ),
+			__( 'Auto-select Class', 'brickslabs-bricks-navigator' ),
 			'brickslabs_bricks_navigator_enhancements',
 			false,
-			__( 'When an element with a CSS class is selected in the editor, automatically activate the first unlocked class in the classes panel.', 'bricks-navigator' )
+			__( 'When an element with a CSS class is selected in the editor, automatically activate the first unlocked class in the classes panel.', 'brickslabs-bricks-navigator' )
 		);
 
 		$this->add_toggle(
 			'brickslabs_bricks_navigator_keyboard_shortcuts',
-			__( 'Keyboard Shortcuts', 'bricks-navigator' ),
+			__( 'Keyboard Shortcuts', 'brickslabs-bricks-navigator' ),
 			'brickslabs_bricks_navigator_enhancements',
 			false,
-			__( 'Add keyboard shortcuts in the Bricks editor: Alt+H (toggle :hover), S (Section), C (Container), B (Block), D (Div), T (Text Basic), H (Heading), I (Image), R (Rich Text), L (Text Link), W (Wrap with Block).', 'bricks-navigator' )
+			__( 'Add keyboard shortcuts in the Bricks editor: Alt+H (toggle :hover), S (Section), C (Container), B (Block), D (Div), T (Text Basic), H (Heading), I (Image), R (Rich Text), L (Text Link), W (Wrap with Block).', 'brickslabs-bricks-navigator' )
 		);
 
 		$this->add_toggle(
 			'brickslabs_bricks_navigator_css_editor',
-			__( 'CSS Editor', 'bricks-navigator' ) . '<br><span style="font-weight:normal;">' . __( '(Beta)', 'bricks-navigator' ) . '</span>',
+			__( 'CSS Editor', 'brickslabs-bricks-navigator' ) . '<br><span style="font-weight:normal;">' . __( '(Beta)', 'brickslabs-bricks-navigator' ) . '</span>',
 			'brickslabs_bricks_navigator_enhancements',
 			false,
-			__( 'Show an inline CSS editor panel in the Bricks element panel with two-way binding between CSS and controls. Editable CSS maps back to layout controls; unmappable properties (color, background, border, etc.) are stored in the element\'s Custom CSS field.', 'bricks-navigator' )
+			__( 'Show an inline CSS editor panel in the Bricks element panel with two-way binding between CSS and controls. Editable CSS maps back to layout controls; unmappable properties (color, background, border, etc.) are stored in the element\'s Custom CSS field.', 'brickslabs-bricks-navigator' )
 		);
 
 		$this->add_toggle(
 			'brickslabs_bricks_navigator_css_editor_auto_apply',
-			__( 'CSS Editor - Auto Apply', 'bricks-navigator' ) . '<br><span style="font-weight:normal;">' . __( '(Beta)', 'bricks-navigator' ) . '</span>',
+			__( 'CSS Editor - Auto Apply', 'brickslabs-bricks-navigator' ) . '<br><span style="font-weight:normal;">' . __( '(Beta)', 'brickslabs-bricks-navigator' ) . '</span>',
 			'brickslabs_bricks_navigator_enhancements',
 			false,
-			__( 'Automatically apply CSS Editor changes as you type (debounced). Requires CSS Editor to be enabled.', 'bricks-navigator' )
+			__( 'Automatically apply CSS Editor changes as you type (debounced). Requires CSS Editor to be enabled.', 'brickslabs-bricks-navigator' )
 		);
 
 		$this->add_toggle(
 			'brickslabs_bricks_navigator_bem_classes',
-			__( 'BEM Classes', 'bricks-navigator' ) . '<br><span style="font-weight:normal;">' . __( '(Beta)', 'bricks-navigator' ) . '</span>',
+			__( 'BEM Classes', 'brickslabs-bricks-navigator' ) . '<br><span style="font-weight:normal;">' . __( '(Beta)', 'brickslabs-bricks-navigator' ) . '</span>',
 			'brickslabs_bricks_navigator_enhancements',
 			false,
-			__( 'Add a BEM class action to each Bricks structure panel layer. Choose a block class, review descendants, exclude specific elements, and assign global classes in BEM format.', 'bricks-navigator' )
+			__( 'Add a BEM class action to each Bricks structure panel layer. Choose a block class, review descendants, exclude specific elements, and assign global classes in BEM format.', 'brickslabs-bricks-navigator' )
 		);
 
 		$this->add_toggle(
 			'brickslabs_bricks_navigator_css_var_context_menu',
-			__( 'CSS Variable Context Menu', 'bricks-navigator' ) . '<br><span style="font-weight:normal;">' . __( '(Beta)', 'bricks-navigator' ) . '</span>',
+			__( 'CSS Variable Context Menu', 'brickslabs-bricks-navigator' ) . '<br><span style="font-weight:normal;">' . __( '(Beta)', 'brickslabs-bricks-navigator' ) . '</span>',
 			'brickslabs_bricks_navigator_enhancements',
 			false,
-			__( 'Right-click any compatible Bricks panel control (number, color, text CSS fields) to open a popover listing CSS custom properties defined on :root. Variables are filtered by relevance to the control type (color, spacing, typography, etc.). Click a variable to insert var(--name) into the field.', 'bricks-navigator' )
+			__( 'Right-click any compatible Bricks panel control (number, color, text CSS fields) to open a popover listing CSS custom properties defined on :root. Variables are filtered by relevance to the control type (color, spacing, typography, etc.). Click a variable to insert var(--name) into the field.', 'brickslabs-bricks-navigator' )
 		);
 	}
 
@@ -249,7 +249,7 @@ final class Settings {
 	 * Render the introductory text for the Enhancements settings section.
 	 */
 	public function render_enhancements_section_description(): void {
-		echo '<p class="description">' . esc_html__( 'These features load inside the Bricks editor regardless of the "Admin bar in Bricks Editor" setting above.', 'bricks-navigator' ) . '</p>';
+		echo '<p class="description">' . esc_html__( 'These features load inside the Bricks editor regardless of the "Admin bar in Bricks Editor" setting above.', 'brickslabs-bricks-navigator' ) . '</p>';
 	}
 
 	// -------------------------------------------------------------------------

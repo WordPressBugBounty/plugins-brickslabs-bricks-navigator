@@ -3,10 +3,10 @@
  * Plugin Name:       BricksLabs Bricks Navigator
  * Plugin URI:        https://brickslabs.com/bricks-navigator/
  * Description:       Adds quick links in the WordPress admin bar for users of the Bricks theme.
- * Version:           1.1.5
+ * Version:           1.1.6
  * Author:            Sridhar Katakam
  * Author URI:        https://brickslabs.com/
- * Text Domain:       bricks-navigator
+ * Text Domain:       brickslabs-bricks-navigator
  * Domain Path:       /languages
  * Requires at least: 6.0
  * Requires PHP:      8.0
@@ -22,7 +22,7 @@ if (!defined("ABSPATH")) {
 
 final class Plugin
 {
-    const VERSION = "1.1.5";
+    const VERSION = "1.1.6";
 
     private static ?self $instance = null;
 
@@ -41,6 +41,11 @@ final class Plugin
     {
         $this->define_constants();
         add_action("plugins_loaded", [$this, "init"]);
+        // Load translations on 'init' so the effective locale — including any
+        // user-specific language set in their profile — has been finalised.
+        // Hooking on 'plugins_loaded' would pick up the site locale only and
+        // miss users whose profile language differs from the site language.
+        add_action("init", [$this, "load_textdomain"], 1);
     }
 
     private function define_constants(): void
@@ -67,7 +72,6 @@ final class Plugin
 
     public function init(): void
     {
-        $this->load_textdomain();
         $this->load_classes();
 
         $this->settings = new Settings();
@@ -121,7 +125,7 @@ final class Plugin
                 /* translators: 1: required version, 2: current version */
                 __(
                     'BricksLabs Bricks Navigator requires PHP version %1$s or higher. You are running version %2$s.',
-                    "bricks-navigator",
+                    "brickslabs-bricks-navigator",
                 ),
                 "8.0",
                 PHP_VERSION,
@@ -133,7 +137,7 @@ final class Plugin
                 /* translators: 1: required version, 2: current version */
                 __(
                     'BricksLabs Bricks Navigator requires WordPress version %1$s or higher. You are running version %2$s.',
-                    "bricks-navigator",
+                    "brickslabs-bricks-navigator",
                 ),
                 "6.0",
                 $GLOBALS["wp_version"],
@@ -143,7 +147,7 @@ final class Plugin
         if ("Bricks" !== $this->get_theme_name()) {
             $errors[] = __(
                 "BricksLabs Bricks Navigator requires Bricks theme to be active.",
-                "bricks-navigator",
+                "brickslabs-bricks-navigator",
             );
         }
 
@@ -170,7 +174,7 @@ final class Plugin
     public function load_textdomain(): void
     {
         load_plugin_textdomain(
-            "bricks-navigator",
+            "brickslabs-bricks-navigator",
             false,
             dirname(plugin_basename(__FILE__)) . "/languages",
         );
@@ -251,7 +255,7 @@ final class Plugin
         $settings_link = sprintf(
             '<a href="%s">%s</a>',
             esc_url(admin_url("admin.php?page=brickslabs-bricks-navigator")),
-            esc_html__("Settings", "bricks-navigator"),
+            esc_html__("Settings", "brickslabs-bricks-navigator"),
         );
         array_unshift($links, $settings_link);
         return $links;
