@@ -77,7 +77,7 @@
 	 */
 	function isEditableTarget( e ) {
 		var tag = e.target.tagName;
-		if ( tag === 'INPUT' ) {
+		if ( tag === 'INPUT' || tag === 'SELECT' ) {
 			// Allow shortcuts on readonly structure-panel label inputs.
 			if ( e.target.readOnly && e.target.closest( '.structure-item .title' ) ) {
 				return false;

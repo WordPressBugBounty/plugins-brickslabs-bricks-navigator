@@ -5,8 +5,7 @@
 	// Constants
 	// -------------------------------------------------------------------------
 
-	var MENU_ID      = 'bl-css-var-menu';
-	var CACHE_ATTR   = 'data-bl-var-cached';
+	var MENU_ID = 'bl-css-var-menu';
 
 	// Bricks controlkeys that should never show the variable picker
 	// (query-loop numeric params, slider speed, etc.)
@@ -40,10 +39,12 @@
 			/^--text-color/, /^--link/, /^--heading/, /^--foreground/,
 			/^--border-color/, // e.g. --border-color-light; checked before border patterns
 			/color$/, /-bg$/, /-background$/, /-foreground$/, /-fill$/,
+			/-color-/, /-clr-/,
 		],
 		spacing: [
 			/^--space/, /^--spacing/, /^--gap/, /^--s-[0-9]/, /^--s$/,
 			/^--padding/, /^--margin/, /^--inset/, /^--size-/,
+			/-space-/, /-spacing-/, /-gap-/,
 		],
 		sizing: [
 			/^--width/, /^--height/, /^--w-/, /^--h-/, /^--max-w/,
@@ -78,6 +79,7 @@
 			// Core Framework heading scale: --h1 … --h6, --h1-*, --heading-*, --title-*
 			/^--h[1-6]$/, /^--h[1-6]-/, /^--heading-/, /^--title-/,
 			/font-size$/,
+			/-step-/,
 		],
 		// --- general typography catch-all (vars that don't fit a sub-category) ---
 		typography: [
@@ -331,12 +333,30 @@
 	// Menu DOM
 	// -------------------------------------------------------------------------
 
-	var menuEl             = null;
-	var activeInput        = null;
-	var activeVars         = [];
-	var originalInputValue = null; // value of activeInput before any hover preview
-	var previewCommitted   = false; // true when the user clicked an item
-	var canvasBlurHandler  = null; // window blur handler — fires when click enters the canvas iframe
+	var menuEl               = null;
+	var activeInput          = null;
+	var activeVars           = [];
+	var allCollectedVars     = [];
+	var categoryFilteredVars = [];
+	var activeCategories     = null;
+	var originalInputValue   = null;
+	var previewCommitted     = false;
+	var canvasBlurHandler    = null;
+	var showOnlyRelevant     = (localStorage.getItem('bl-var-relevant-only') !== '0');
+
+	function updateToggleButton() {
+		var btn = menuEl && menuEl.querySelector('.bl-var-toggle-filter');
+		if ( ! btn ) return;
+		if ( showOnlyRelevant ) {
+			btn.textContent = 'All';
+			btn.title       = 'Showing relevant variables — click to show all';
+			btn.classList.remove('is-active');
+		} else {
+			btn.textContent = 'Rel';
+			btn.title       = 'Showing all variables — click to show relevant only';
+			btn.classList.add('is-active');
+		}
+	}
 
 	function buildMenu() {
 		if ( document.getElementById(MENU_ID) ) {
@@ -351,6 +371,7 @@
 		menuEl.innerHTML =
 			'<div class="bl-var-header">' +
 				'<input type="text" class="bl-var-search" placeholder="Search variables…" autocomplete="off" spellcheck="false">' +
+				'<button class="bl-var-toggle-filter" title=""></button>' +
 				'<button class="bl-var-refresh" title="Re-collect variables">&#8635;</button>' +
 				'<button class="bl-var-close" aria-label="Close">&times;</button>' +
 			'</div>' +
@@ -363,10 +384,28 @@
 			hideMenu();
 		});
 
+		menuEl.querySelector('.bl-var-toggle-filter').addEventListener('mousedown', function (e) {
+			e.preventDefault();
+			showOnlyRelevant = ! showOnlyRelevant;
+			localStorage.setItem('bl-var-relevant-only', showOnlyRelevant ? '1' : '0');
+			activeVars = showOnlyRelevant ? categoryFilteredVars : allCollectedVars;
+			updateToggleButton();
+			renderList(menuEl.querySelector('.bl-var-search').value.toLowerCase());
+		});
+
 		menuEl.querySelector('.bl-var-refresh').addEventListener('mousedown', function (e) {
 			e.preventDefault();
 			invalidateCache();
-			activeVars = collectVars();
+			allCollectedVars = collectVars();
+			if ( activeCategories === null ) {
+				categoryFilteredVars = allCollectedVars;
+			} else {
+				categoryFilteredVars = allCollectedVars.filter( function (v) {
+					return activeCategories.indexOf(v.category) !== -1;
+				});
+				if ( ! categoryFilteredVars.length ) categoryFilteredVars = allCollectedVars;
+			}
+			activeVars = showOnlyRelevant ? categoryFilteredVars : allCollectedVars;
 			renderList(menuEl.querySelector('.bl-var-search').value.toLowerCase());
 		});
 
@@ -451,14 +490,17 @@
 		activeInput.dispatchEvent(new Event('input', { bubbles: true }));
 	}
 
-	function showMenu(e, input, vars) {
-		activeInput        = input;
-		activeVars         = vars;
-		originalInputValue = input.value;
-		previewCommitted   = false;
+	function showMenu(e, input, allVars, filteredVars) {
+		activeInput          = input;
+		allCollectedVars     = allVars;
+		categoryFilteredVars = filteredVars;
+		activeVars           = showOnlyRelevant ? categoryFilteredVars : allCollectedVars;
+		originalInputValue   = input.value;
+		previewCommitted     = false;
 
-		renderList('');
+		updateToggleButton();
 		menuEl.querySelector('.bl-var-search').value = '';
+		renderList('');
 
 		// Initial position near cursor
 		menuEl.style.left    = e.clientX + 'px';
@@ -524,22 +566,22 @@
 		e.preventDefault();
 		e.stopPropagation();
 
-		var allVars    = collectVars();
-		var controlEl  = e.target.closest('[data-control]');
-		var categories = getRelevantCategories(controlEl);
-		var vars;
+		var allVars      = collectVars();
+		var controlEl    = e.target.closest('[data-control]');
+		activeCategories = getRelevantCategories(controlEl);
+		var filteredVars;
 
-		if ( categories === null ) {
-			vars = allVars;
+		if ( activeCategories === null ) {
+			filteredVars = allVars;
 		} else {
-			vars = allVars.filter( function (v) {
-				return categories.indexOf(v.category) !== -1;
+			filteredVars = allVars.filter( function (v) {
+				return activeCategories.indexOf(v.category) !== -1;
 			});
-			// Fall back to all if filtering left nothing
-			if ( ! vars.length ) vars = allVars;
+			// Fall back to all if category filtering left nothing (custom variable names)
+			if ( ! filteredVars.length ) filteredVars = allVars;
 		}
 
-		showMenu(e, input, vars);
+		showMenu(e, input, allVars, filteredVars);
 	}
 
 	// -------------------------------------------------------------------------

@@ -5,7 +5,7 @@ Tags: bricks, bricks builder, admin bar
 Donate link: https://www.paypal.me/sridharkatakam
 Requires at least: 6.0
 Tested up to: 6.9.4
-Stable tag: 1.1.6
+Stable tag: 1.1.7
 Requires PHP: 8.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -90,6 +90,14 @@ Search for `bricks navigator` from within your WordPress plugins' Add New page a
 7. Screenshot showing contextual menu (with live preview on hover) for the builder controls.
 
 == Changelog ==
+
+= 1.1.7 ( May 20, 2026 ) =
+* Improved CSS Variables Context Menu: added "All / Rel" toggle button to switch between relevant-only and all variables; preference is persisted to localStorage so custom design system users only set it once.
+* Improved CSS Variables Context Menu: auto-fallback to all variables when category filtering returns no results, ensuring custom-prefixed CSS variables like `--utopia-space-xs` and `--brand-color-primary` are never silently hidden.
+* Improved CSS Variables Context Menu: added unanchored regex patterns for color (`-color-`, `-clr-`), spacing (`-space-`, `-spacing-`, `-gap-`), and font-size (`-step-`) to correctly classify custom-prefixed variables into their categories.
+* Fixed Auto-select Class: replaced `hasOwnProperty` check with `Array.isArray` to prevent a TypeError crash when `_cssGlobalClasses` exists on an element but is not an array (e.g. after a malformed JSON import).
+* Fixed Keyboard Shortcuts: native `<select>` dropdowns inside the Bricks panel are now correctly treated as editable targets, preventing shortcuts from firing while a dropdown is focused.
+* Removed unused internal constant `CACHE_ATTR` from the CSS Variables Context Menu module.
 
 = 1.1.6 ( May 20, 2026 ) =
 * Fixed translations not loading: text domain renamed from `bricks-navigator` to `brickslabs-bricks-navigator` to match the plugin slug, which is how WordPress names downloaded language pack files.

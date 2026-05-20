@@ -51,13 +51,13 @@
 	border-color: #7878e0;
 }
 
+.bl-var-toggle-filter,
 .bl-var-refresh,
 .bl-var-close {
 	flex-shrink: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 24px;
 	height: 24px;
 	background: none;
 	border: none;
@@ -72,10 +72,34 @@
 		color 0.15s;
 }
 
+.bl-var-refresh,
+.bl-var-close {
+	width: 24px;
+}
+
+.bl-var-toggle-filter {
+	min-width: 30px;
+	padding: 0 5px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+}
+
+.bl-var-toggle-filter:hover,
 .bl-var-refresh:hover,
 .bl-var-close:hover {
 	background: #2e2e48;
 	color: #d0d0ec;
+}
+
+.bl-var-toggle-filter.is-active {
+	background: rgba(120, 120, 224, 0.15);
+	color: #9898e8;
+}
+
+.bl-var-toggle-filter.is-active:hover {
+	background: rgba(120, 120, 224, 0.25);
+	color: #ababf0;
 }
 
 /* ---- Scrollable list ---- */

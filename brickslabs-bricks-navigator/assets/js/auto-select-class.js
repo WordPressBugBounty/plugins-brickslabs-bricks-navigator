@@ -46,7 +46,7 @@
         var hasClass = elementObj &&
             elementObj.hasOwnProperty('id') &&
             elementObj.hasOwnProperty('settings') &&
-            elementObj.settings.hasOwnProperty('_cssGlobalClasses');
+            Array.isArray(elementObj.settings._cssGlobalClasses);
 
         if (!hasClass) {
             state.lastElementFocus = false;
