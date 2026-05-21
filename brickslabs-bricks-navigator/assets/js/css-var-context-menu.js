@@ -1,20 +1,16 @@
-(function () {
-	'use strict';
-
+(() => {
 	// -------------------------------------------------------------------------
 	// Constants
 	// -------------------------------------------------------------------------
 
-	var MENU_ID = 'bl-css-var-menu';
+	const MENU_ID = 'bl-css-var-menu';
 
 	// Bricks controlkeys that should never show the variable picker
 	// (query-loop numeric params, slider speed, etc.)
-	var EXCLUDED_KEYS = [
-		'start', 'perPage', 'perMove', 'speed', 'rating', 'maxRating',
-	];
+	const EXCLUDED_KEYS = ['start', 'perPage', 'perMove', 'speed', 'rating', 'maxRating'];
 
 	// Specific text controlkeys that accept CSS values and benefit from variables
-	var ALLOWED_TEXT_KEYS = [
+	const ALLOWED_TEXT_KEYS = [
 		'_backdropFilter', '_pointerEvents', '_aspectRatio', '_perspectiveOrigin',
 		'_cssTransition', '_transformOrigin', '_flexBasis', '_overflow',
 		'_gridTemplateColumns', '_gridTemplateRows', '_gridAutoColumns', '_gridAutoRows',
@@ -23,21 +19,14 @@
 
 	// -------------------------------------------------------------------------
 	// Variable naming patterns → category
-	//
-	// Typography is split into sub-categories so each Bricks typography
-	// sub-control (font-size, font-weight, line-height, letter-spacing,
-	// font-family) shows only its own relevant variables.
-	//
-	// Key rule: more-specific sub-categories are listed BEFORE the general
-	// 'typography' catch-all so getVarCategory() returns the right bucket.
 	// -------------------------------------------------------------------------
 
-	var CATEGORY_PATTERNS = {
+	const CATEGORY_PATTERNS = {
 		color: [
 			/^--color/, /^--clr/, /^--palette/, /^--primary/, /^--secondary/,
 			/^--accent/, /^--base/, /^--surface/, /^--bg/, /^--background/,
 			/^--text-color/, /^--link/, /^--heading/, /^--foreground/,
-			/^--border-color/, // e.g. --border-color-light; checked before border patterns
+			/^--border-color/,
 			/color$/, /-bg$/, /-background$/, /-foreground$/, /-fill$/,
 			/-color-/, /-clr-/,
 		],
@@ -50,7 +39,6 @@
 			/^--width/, /^--height/, /^--w-/, /^--h-/, /^--max-w/,
 			/^--min-w/, /^--max-h/, /^--min-h/, /^--container/, /^--measure/,
 		],
-		// --- typography sub-categories (checked before the general catch-all) ---
 		'font-weight': [
 			/^--font-weight/, /^--fw-/, /^--f-weight/, /^--font-bold/,
 			/^--text-font-weight/, /^--text-weight/, /font-weight$/, /weight$/,
@@ -68,24 +56,18 @@
 			/^--text-font-family/, /font-family$/, /typeface$/,
 		],
 		'font-size': [
-			// Core Framework: --text-xs, --text-s, --text-m, --text-mm, --text-l, --text-xl, --text-xxl
-			// Negative lookahead excludes --text-font-*, --text-weight*, --text-color*,
-			// --text-line*, --text-letter*, --text-family*, --text-style*, --text-transform*.
 			/^--text-(?!font|weight|color|line|letter|family|style|transform|decoration)/,
 			/^--font-size/, /^--fs-/, /^--f-size/,
 			/^--step-/, /^--fluid-text/, /^--fluid-type/,
 			/^--text-size/, /^--text-fluid/,
 			/^--heading-size/, /^--body-size/, /^--small-size/, /^--large-size/,
-			// Core Framework heading scale: --h1 … --h6, --h1-*, --heading-*, --title-*
 			/^--h[1-6]$/, /^--h[1-6]-/, /^--heading-/, /^--title-/,
 			/font-size$/,
 			/-step-/,
 		],
-		// --- general typography catch-all (vars that don't fit a sub-category) ---
 		typography: [
 			/^--font/, /^--type/, /^--text-/,
 		],
-		// --- other categories ---
 		border: [
 			/^--border/, /^--outline/, /^--radius/, /^--rounded/,
 			/^--border-radius/,
@@ -106,260 +88,214 @@
 		],
 	};
 
-	// All typography sub-category keys (used as a fallback when the specific
-	// sub-control label can't be detected).
-	var ALL_TYPOGRAPHY_CATS = [ 'font-size', 'font-weight', 'line-height', 'letter-spacing', 'font-family', 'typography' ];
+	const ALL_TYPOGRAPHY_CATS = ['font-size', 'font-weight', 'line-height', 'letter-spacing', 'font-family', 'typography'];
 
 	// -------------------------------------------------------------------------
 	// Detect the visible label text for a Bricks panel control
 	// -------------------------------------------------------------------------
 
-	function getControlLabel(controlEl) {
-		var label = controlEl.querySelector('label');
-		if ( label ) return label.textContent.trim().toLowerCase();
-
-		var inner = controlEl.closest('.control-inner');
-		if ( inner ) {
+	const getControlLabel = (controlEl) => {
+		let label = controlEl.querySelector('label');
+		if (label) return label.textContent.trim().toLowerCase();
+		const inner = controlEl.closest('.control-inner');
+		if (inner) {
 			label = inner.querySelector('label');
-			if ( label ) return label.textContent.trim().toLowerCase();
+			if (label) return label.textContent.trim().toLowerCase();
 		}
-
 		return '';
-	}
+	};
 
 	// -------------------------------------------------------------------------
 	// Control type → relevant categories (null = show all)
 	// -------------------------------------------------------------------------
 
-	function getRelevantCategories(controlEl) {
-		if ( ! controlEl ) return null;
+	const getRelevantCategories = (controlEl) => {
+		if (!controlEl) return null;
 
-		var dataControl = controlEl.dataset.control || '';
-		var ckEl        = controlEl.closest('[data-controlkey]');
-		var ck          = ckEl ? ckEl.dataset.controlkey.toLowerCase() : '';
+		const dataControl = controlEl.dataset.control ?? '';
+		const ckEl = controlEl.closest('[data-controlkey]');
+		const ck = ckEl ? ckEl.dataset.controlkey.toLowerCase() : '';
 
-		if ( dataControl === 'color' || controlEl.closest('.color-input') ) {
-			return [ 'color' ];
-		}
+		if (dataControl === 'color' || controlEl.closest('.color-input')) return ['color'];
 
-		var inTypography = [ 'typography', 'font' ].some( function (s) { return ck.includes(s); } );
-		if ( inTypography ) {
-			// Use the control's visible label to pick the specific sub-category.
-			var label = getControlLabel(controlEl);
-			if ( /size/.test(label) )                              return [ 'font-size' ];
-			if ( /weight/.test(label) )                            return [ 'font-weight' ];
-			if ( /line.?height|leading/.test(label) )              return [ 'line-height' ];
-			if ( /letter.?spacing|tracking/.test(label) )         return [ 'letter-spacing' ];
-			if ( /family|typeface/.test(label) )                   return [ 'font-family' ];
-			// Unknown sub-control: show all typography buckets.
+		const inTypography = ['typography', 'font'].some(s => ck.includes(s));
+		if (inTypography) {
+			const label = getControlLabel(controlEl);
+			if (/size/.test(label))                             return ['font-size'];
+			if (/weight/.test(label))                           return ['font-weight'];
+			if (/line.?height|leading/.test(label))             return ['line-height'];
+			if (/letter.?spacing|tracking/.test(label))         return ['letter-spacing'];
+			if (/family|typeface/.test(label))                  return ['font-family'];
 			return ALL_TYPOGRAPHY_CATS;
 		}
 
-		if ( [ 'padding', 'margin', 'gap' ].some( function (s) { return ck.includes(s); } ) ) {
-			return [ 'spacing' ];
-		}
-		if ( [ 'width', 'height' ].some( function (s) { return ck.includes(s); } ) ) {
-			return [ 'sizing', 'spacing' ];
-		}
-		if ( [ 'border', 'outline', 'radius' ].some( function (s) { return ck.includes(s); } ) ) {
-			// Bricks radius corner inputs (Top Left, Top Right, …) share the parent
-			// _border controlkey, so ck alone says "border" not "radius".
-			// The input's id and its label's for="" both carry the setting key
-			// (e.g. _borderTopLeftRadius), which reliably contains "radius".
-			var inp      = controlEl.querySelector('input');
-			var inpId    = inp ? inp.id.toLowerCase() : '';
-			var lbl      = controlEl.querySelector('label');
-			var lblFor   = lbl ? ( lbl.getAttribute('for') || '' ).toLowerCase() : '';
+		if (['padding', 'margin', 'gap'].some(s => ck.includes(s))) return ['spacing'];
+		if (['width', 'height'].some(s => ck.includes(s))) return ['sizing', 'spacing'];
 
-			if ( ck.includes('radius') || inpId.includes('radius') || lblFor.includes('radius') ) {
-				return [ 'border' ];
+		if (['border', 'outline', 'radius'].some(s => ck.includes(s))) {
+			const inp = controlEl.querySelector('input');
+			const inpId = inp ? inp.id.toLowerCase() : '';
+			const lbl = controlEl.querySelector('label');
+			const lblFor = lbl ? (lbl.getAttribute('for') ?? '').toLowerCase() : '';
+			if (ck.includes('radius') || inpId.includes('radius') || lblFor.includes('radius')) {
+				return ['border'];
 			}
-			return [ 'border', 'sizing' ];
+			return ['border', 'sizing'];
 		}
-		if ( [ 'grid', 'template', 'columns', 'rows' ].some( function (s) { return ck.includes(s); } ) ) {
-			return [ 'grid', 'spacing', 'sizing' ];
-		}
-		if ( [ 'transition', 'animation', 'duration', 'ease' ].some( function (s) { return ck.includes(s); } ) ) {
-			return [ 'transition' ];
-		}
-		if ( [ 'zindex', 'z-index', 'order' ].some( function (s) { return ck.includes(s); } ) ) {
-			return [ 'zindex' ];
-		}
-		if ( [ 'shadow' ].some( function (s) { return ck.includes(s); } ) ) {
-			return [ 'shadow' ];
-		}
-		if ( dataControl === 'number' ) {
-			return [ 'spacing', 'sizing' ];
-		}
+
+		if (['grid', 'template', 'columns', 'rows'].some(s => ck.includes(s))) return ['grid', 'spacing', 'sizing'];
+		if (['transition', 'animation', 'duration', 'ease'].some(s => ck.includes(s))) return ['transition'];
+		if (['zindex', 'z-index', 'order'].some(s => ck.includes(s))) return ['zindex'];
+		if (['shadow'].some(s => ck.includes(s))) return ['shadow'];
+		if (dataControl === 'number') return ['spacing', 'sizing'];
 
 		return null;
-	}
+	};
 
 	// -------------------------------------------------------------------------
 	// Categorise a CSS custom property name
 	// -------------------------------------------------------------------------
 
-	function getVarCategory(name) {
-		for ( var cat in CATEGORY_PATTERNS ) {
-			if ( ! CATEGORY_PATTERNS.hasOwnProperty(cat) ) continue;
-			var patterns = CATEGORY_PATTERNS[ cat ];
-			for ( var i = 0; i < patterns.length; i++ ) {
-				if ( patterns[ i ].test(name) ) return cat;
-			}
+	const getVarCategory = (name) => {
+		for (const cat of Object.keys(CATEGORY_PATTERNS)) {
+			if (CATEGORY_PATTERNS[cat].some(re => re.test(name))) return cat;
 		}
 		return 'other';
-	}
+	};
 
 	// -------------------------------------------------------------------------
 	// Collect CSS custom properties (cached)
 	// -------------------------------------------------------------------------
 
-	var cachedVars = null;
+	let cachedVars = null;
 
-	function collectVars() {
-		if ( cachedVars ) return cachedVars;
+	const collectVars = () => {
+		if (cachedVars) return cachedVars;
 
-		var vars = [];
-		var seen = {};
+		const vars = [];
+		const seen = {};
 
-		// The builder runs inside #bricks-builder-iframe; the page's own stylesheets
-		// (and therefore most CSS custom properties) live in the parent document.
-		// window.parent.document gives access to those without any iframe lookup.
-		var sources = [ document ];
+		const sources = [document];
 		try {
-			if ( window.parent && window.parent !== window && window.parent.document ) {
+			if (window.parent && window.parent !== window && window.parent.document) {
 				sources.unshift(window.parent.document);
 			}
-		} catch ( e ) {} // guard against cross-origin edge cases
+		} catch (e) {}
 
-		sources.forEach( function (doc) {
+		for (const doc of sources) {
 			try {
-				Array.from(doc.styleSheets).forEach( function (sheet) {
+				for (const sheet of doc.styleSheets) {
 					try {
-						Array.from(sheet.cssRules || []).forEach( function (rule) {
-							var sel = rule.selectorText || '';
-							if ( sel !== ':root' && ! sel.includes(':root') ) return;
-							Array.from(rule.style).forEach( function (prop) {
-								if ( prop.startsWith('--') && ! seen[ prop ] ) {
-									seen[ prop ] = true;
-									var value = rule.style.getPropertyValue(prop).trim();
+						for (const rule of sheet.cssRules ?? []) {
+							const sel = rule.selectorText ?? '';
+							if (sel !== ':root' && !sel.includes(':root')) continue;
+							for (const prop of rule.style) {
+								if (prop.startsWith('--') && !seen[prop]) {
+									seen[prop] = true;
 									vars.push({
 										name: prop,
-										value: value,
+										value: rule.style.getPropertyValue(prop).trim(),
 										category: getVarCategory(prop),
 									});
 								}
-							});
-						});
+							}
+						}
 					} catch (e) {}
-				});
+				}
 			} catch (e) {}
-		});
+		}
 
-		vars.sort( function (a, b) { return a.name.localeCompare(b.name); });
+		vars.sort((a, b) => a.name.localeCompare(b.name));
 		cachedVars = vars;
 		return vars;
-	}
+	};
 
-	function invalidateCache() {
-		cachedVars = null;
-	}
+	const invalidateCache = () => { cachedVars = null; };
 
 	// -------------------------------------------------------------------------
 	// Helpers
 	// -------------------------------------------------------------------------
 
-	function escapeHtml(str) {
-		return String(str)
+	const escapeHtml = (str) =>
+		String(str)
 			.replace(/&/g, '&amp;')
 			.replace(/</g, '&lt;')
 			.replace(/>/g, '&gt;')
 			.replace(/"/g, '&quot;');
-	}
 
-	function isExcludedControlKey(el) {
-		var ckEl = el.closest('[data-controlkey]');
-		if ( ! ckEl ) return false;
-		return EXCLUDED_KEYS.indexOf(ckEl.dataset.controlkey) !== -1;
-	}
+	const isExcludedControlKey = (el) => {
+		const ckEl = el.closest('[data-controlkey]');
+		return ckEl ? EXCLUDED_KEYS.includes(ckEl.dataset.controlkey) : false;
+	};
 
 	// -------------------------------------------------------------------------
 	// Determine whether the right-clicked target should open the variable menu
-	// and return the <input> to write into.
 	// -------------------------------------------------------------------------
 
-	function resolveInput(target) {
-		var controlEl = target.closest('[data-control]');
-		if ( ! controlEl ) return null;
+	const resolveInput = (target) => {
+		const controlEl = target.closest('[data-control]');
+		if (!controlEl) return null;
+		if (controlEl.closest('.control-query')) return null;
+		if (isExcludedControlKey(target)) return null;
 
-		// Never inside a query-loop control
-		if ( controlEl.closest('.control-query') ) return null;
+		const dataControl = controlEl.dataset.control;
 
-		// Never on excluded numeric controlkeys
-		if ( isExcludedControlKey(target) ) return null;
-
-		var dataControl = controlEl.dataset.control;
-
-		// Color control
-		if ( dataControl === 'color' ) {
-			return controlEl.querySelector('.color-input input') || null;
+		if (dataControl === 'color') {
+			return controlEl.querySelector('.color-input input') ?? null;
 		}
 
-		// Number control (Bricks dimension / unit inputs)
-		if ( dataControl === 'number' ) {
-			return controlEl.querySelector('input[type="number"], input[type="text"]') || null;
+		if (dataControl === 'number') {
+			return controlEl.querySelector('input[type="number"], input[type="text"]') ?? null;
 		}
 
-		// has-variables controls (Bricks marks these natively)
-		if ( controlEl.classList.contains('has-variables') ) {
-			return controlEl.querySelector('input') || null;
+		if (controlEl.classList.contains('has-variables')) {
+			return controlEl.querySelector('input') ?? null;
 		}
 
-		// Specific text controlkeys that accept raw CSS
-		if ( dataControl === 'text' ) {
-			var ckEl = controlEl.closest('[data-controlkey]');
-			if ( ! ckEl ) return null;
-			var ck = ckEl.dataset.controlkey;
-			if ( ck.startsWith('raw-') || ALLOWED_TEXT_KEYS.indexOf(ck) !== -1 ) {
-				return controlEl.querySelector('input') || null;
+		if (dataControl === 'text') {
+			const ckEl = controlEl.closest('[data-controlkey]');
+			if (!ckEl) return null;
+			const ck = ckEl.dataset.controlkey;
+			if (ck.startsWith('raw-') || ALLOWED_TEXT_KEYS.includes(ck)) {
+				return controlEl.querySelector('input') ?? null;
 			}
 			return null;
 		}
 
 		return null;
-	}
+	};
 
 	// -------------------------------------------------------------------------
 	// Menu DOM
 	// -------------------------------------------------------------------------
 
-	var menuEl               = null;
-	var activeInput          = null;
-	var activeVars           = [];
-	var allCollectedVars     = [];
-	var categoryFilteredVars = [];
-	var activeCategories     = null;
-	var originalInputValue   = null;
-	var previewCommitted     = false;
-	var canvasBlurHandler    = null;
-	var showOnlyRelevant     = (localStorage.getItem('bl-var-relevant-only') !== '0');
+	let menuEl               = null;
+	let activeInput          = null;
+	let activeVars           = [];
+	let allCollectedVars     = [];
+	let categoryFilteredVars = [];
+	let activeCategories     = null;
+	let originalInputValue   = null;
+	let previewCommitted     = false;
+	let canvasBlurHandler    = null;
+	let showOnlyRelevant     = (localStorage.getItem('bl-var-relevant-only') !== '0');
 
-	function updateToggleButton() {
-		var btn = menuEl && menuEl.querySelector('.bl-var-toggle-filter');
-		if ( ! btn ) return;
-		if ( showOnlyRelevant ) {
+	const updateToggleButton = () => {
+		const btn = menuEl?.querySelector('.bl-var-toggle-filter');
+		if (!btn) return;
+		if (showOnlyRelevant) {
 			btn.textContent = 'All';
-			btn.title       = 'Showing relevant variables — click to show all';
+			btn.title = 'Showing relevant variables — click to show all';
 			btn.classList.remove('is-active');
 		} else {
 			btn.textContent = 'Rel';
-			btn.title       = 'Showing all variables — click to show relevant only';
+			btn.title = 'Showing all variables — click to show relevant only';
 			btn.classList.add('is-active');
 		}
-	}
+	};
 
-	function buildMenu() {
-		if ( document.getElementById(MENU_ID) ) {
+	const buildMenu = () => {
+		if (document.getElementById(MENU_ID)) {
 			menuEl = document.getElementById(MENU_ID);
 			return;
 		}
@@ -379,31 +315,29 @@
 
 		document.body.appendChild(menuEl);
 
-		menuEl.querySelector('.bl-var-close').addEventListener('mousedown', function (e) {
+		menuEl.querySelector('.bl-var-close').addEventListener('mousedown', (e) => {
 			e.preventDefault();
 			hideMenu();
 		});
 
-		menuEl.querySelector('.bl-var-toggle-filter').addEventListener('mousedown', function (e) {
+		menuEl.querySelector('.bl-var-toggle-filter').addEventListener('mousedown', (e) => {
 			e.preventDefault();
-			showOnlyRelevant = ! showOnlyRelevant;
+			showOnlyRelevant = !showOnlyRelevant;
 			localStorage.setItem('bl-var-relevant-only', showOnlyRelevant ? '1' : '0');
 			activeVars = showOnlyRelevant ? categoryFilteredVars : allCollectedVars;
 			updateToggleButton();
 			renderList(menuEl.querySelector('.bl-var-search').value.toLowerCase());
 		});
 
-		menuEl.querySelector('.bl-var-refresh').addEventListener('mousedown', function (e) {
+		menuEl.querySelector('.bl-var-refresh').addEventListener('mousedown', (e) => {
 			e.preventDefault();
 			invalidateCache();
 			allCollectedVars = collectVars();
-			if ( activeCategories === null ) {
+			if (activeCategories === null) {
 				categoryFilteredVars = allCollectedVars;
 			} else {
-				categoryFilteredVars = allCollectedVars.filter( function (v) {
-					return activeCategories.indexOf(v.category) !== -1;
-				});
-				if ( ! categoryFilteredVars.length ) categoryFilteredVars = allCollectedVars;
+				categoryFilteredVars = allCollectedVars.filter(v => activeCategories.includes(v.category));
+				if (!categoryFilteredVars.length) categoryFilteredVars = allCollectedVars;
 			}
 			activeVars = showOnlyRelevant ? categoryFilteredVars : allCollectedVars;
 			renderList(menuEl.querySelector('.bl-var-search').value.toLowerCase());
@@ -413,84 +347,64 @@
 			renderList(this.value.toLowerCase());
 		});
 
-		menuEl.addEventListener('keydown', function (e) {
-			if ( e.key === 'Escape' ) {
-				e.stopPropagation();
-				hideMenu();
-			}
+		menuEl.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape') { e.stopPropagation(); hideMenu(); }
 		});
-	}
+	};
 
-	function renderList(filter) {
-		var list     = menuEl.querySelector('.bl-var-list');
-		var filtered = filter
-			? activeVars.filter( function (v) {
-				return v.name.includes(filter) || v.value.toLowerCase().includes(filter);
-			})
+	const renderList = (filter) => {
+		const list = menuEl.querySelector('.bl-var-list');
+		const filtered = filter
+			? activeVars.filter(v => v.name.includes(filter) || v.value.toLowerCase().includes(filter))
 			: activeVars;
 
-		if ( ! filtered.length ) {
+		if (!filtered.length) {
 			list.innerHTML = '<p class="bl-var-empty">No variables found.</p>';
 			return;
 		}
 
-		// Group by category
-		var groups = {};
-		filtered.forEach( function (v) {
-			if ( ! groups[ v.category ] ) groups[ v.category ] = [];
-			groups[ v.category ].push(v);
-		});
+		const groups = {};
+		for (const v of filtered) {
+			(groups[v.category] ??= []).push(v);
+		}
 
-		var html = '';
-		Object.keys(groups).sort().forEach( function (cat) {
-			html += '<div class="bl-var-group">';
-			html += '<div class="bl-var-group-label">' + escapeHtml(cat) + '</div>';
-			groups[ cat ].forEach( function (v) {
-				var swatch = v.category === 'color' && v.value
-					? '<span class="bl-var-swatch" style="background:' + escapeHtml(v.value) + '"></span>'
+		let html = '';
+		for (const cat of Object.keys(groups).sort()) {
+			html += `<div class="bl-var-group"><div class="bl-var-group-label">${escapeHtml(cat)}</div>`;
+			for (const v of groups[cat]) {
+				const swatch = v.category === 'color' && v.value
+					? `<span class="bl-var-swatch" style="background:${escapeHtml(v.value)}"></span>`
 					: '';
-				html +=
-					'<button class="bl-var-item" data-insert="var(' + escapeHtml(v.name) + ')" data-category="' + escapeHtml(v.category) + '" title="' + escapeHtml(v.name) + '">' +
-						swatch +
-						'<span class="bl-var-name">' + escapeHtml(v.name.replace('--', '')) + '</span>' +
-					'</button>';
-			});
+				html += `<button class="bl-var-item" data-insert="var(${escapeHtml(v.name)})" data-category="${escapeHtml(v.category)}" title="${escapeHtml(v.name)}">${swatch}<span class="bl-var-name">${escapeHtml(v.name.replace('--', ''))}</span></button>`;
+			}
 			html += '</div>';
-		});
+		}
 
 		list.innerHTML = html;
 
-		list.querySelectorAll('.bl-var-item').forEach( function (btn) {
-			btn.addEventListener('mouseenter', function () {
-				applyPreview(btn.dataset.insert);
-			});
-			btn.addEventListener('mouseleave', function () {
-				restorePreview();
-			});
-			btn.addEventListener('mousedown', function (e) {
+		list.querySelectorAll('.bl-var-item').forEach(btn => {
+			btn.addEventListener('mouseenter', () => applyPreview(btn.dataset.insert));
+			btn.addEventListener('mouseleave', () => restorePreview());
+			btn.addEventListener('mousedown', (e) => {
 				e.preventDefault();
 				insertVariable(btn.dataset.insert);
 			});
 		});
-	}
+	};
 
-	// Write varStr into the active input and fire only the input event so the
-	// canvas updates live. The change event is intentionally omitted to avoid
-	// dirtying Bricks state or polluting undo history on hover.
-	function applyPreview(varStr) {
-		if ( ! activeInput ) return;
+	const applyPreview = (varStr) => {
+		if (!activeInput) return;
 		activeInput.value = varStr;
 		activeInput.dispatchEvent(new Event('input', { bubbles: true }));
-	}
+	};
 
-	// Restore the input to its value at menu-open time (input-only, no change).
-	function restorePreview() {
-		if ( ! activeInput || originalInputValue === null ) return;
+	const restorePreview = () => {
+		if (!activeInput || originalInputValue === null) return;
 		activeInput.value = originalInputValue;
 		activeInput.dispatchEvent(new Event('input', { bubbles: true }));
-	}
+	};
 
-	function showMenu(e, input, allVars, filteredVars) {
+	const showMenu = (e, input, allVars, filteredVars) => {
 		activeInput          = input;
 		allCollectedVars     = allVars;
 		categoryFilteredVars = filteredVars;
@@ -502,118 +416,100 @@
 		menuEl.querySelector('.bl-var-search').value = '';
 		renderList('');
 
-		// Initial position near cursor
-		menuEl.style.left    = e.clientX + 'px';
-		menuEl.style.top     = e.clientY + 'px';
+		menuEl.style.left    = `${e.clientX}px`;
+		menuEl.style.top     = `${e.clientY}px`;
 		menuEl.style.display = 'flex';
 
-		// Adjust if off-screen, then focus the search box and arm the blur handler.
-		// Registering the blur handler inside rAF ensures focus has already settled
-		// on the search input, so the handler won't fire spuriously on menu open.
-		requestAnimationFrame( function () {
-			var rect = menuEl.getBoundingClientRect();
-			if ( rect.right > window.innerWidth - 8 ) {
-				menuEl.style.left = ( window.innerWidth - rect.width - 8 ) + 'px';
+		requestAnimationFrame(() => {
+			const rect = menuEl.getBoundingClientRect();
+			if (rect.right > window.innerWidth - 8) {
+				menuEl.style.left = `${window.innerWidth - rect.width - 8}px`;
 			}
-			if ( rect.bottom > window.innerHeight - 8 ) {
-				menuEl.style.top = Math.max(8, e.clientY - rect.height) + 'px';
+			if (rect.bottom > window.innerHeight - 8) {
+				menuEl.style.top = `${Math.max(8, e.clientY - rect.height)}px`;
 			}
 			menuEl.querySelector('.bl-var-search').focus();
 
-			// Clicks inside the canvas iframe don't bubble to the parent document.
-			// When focus shifts into the iframe the parent window fires 'blur', which
-			// is the only reliable cross-document signal for an iframe click.
-			canvasBlurHandler = function () { hideMenu(); };
+			canvasBlurHandler = () => hideMenu();
 			window.addEventListener('blur', canvasBlurHandler);
 		});
-	}
+	};
 
-	function hideMenu() {
-		if ( ! previewCommitted ) restorePreview();
-		if ( menuEl ) menuEl.style.display = 'none';
+	const hideMenu = () => {
+		if (!previewCommitted) restorePreview();
+		if (menuEl) menuEl.style.display = 'none';
 		activeInput        = null;
 		originalInputValue = null;
 		previewCommitted   = false;
 
-		if ( canvasBlurHandler ) {
+		if (canvasBlurHandler) {
 			window.removeEventListener('blur', canvasBlurHandler);
 			canvasBlurHandler = null;
 		}
-	}
+	};
 
-	function insertVariable(varStr) {
-		if ( ! activeInput ) return;
-
-		previewCommitted = true; // prevent hideMenu() from restoring the old value
-
-		var input = activeInput;
+	const insertVariable = (varStr) => {
+		if (!activeInput) return;
+		previewCommitted = true;
+		const input = activeInput;
 		input.value = varStr;
 		input.dispatchEvent(new Event('input',  { bubbles: true }));
 		input.dispatchEvent(new Event('change', { bubbles: true }));
-
 		hideMenu();
 		input.focus();
-	}
+	};
 
 	// -------------------------------------------------------------------------
 	// Event delegation — contextmenu on the Bricks panel
 	// -------------------------------------------------------------------------
 
-	function onContextMenu(e) {
-		var input = resolveInput(e.target);
-		if ( ! input ) return;
+	const onContextMenu = (e) => {
+		const input = resolveInput(e.target);
+		if (!input) return;
 
 		e.preventDefault();
 		e.stopPropagation();
 
-		var allVars      = collectVars();
-		var controlEl    = e.target.closest('[data-control]');
-		activeCategories = getRelevantCategories(controlEl);
-		var filteredVars;
+		const allVars      = collectVars();
+		const controlEl    = e.target.closest('[data-control]');
+		activeCategories   = getRelevantCategories(controlEl);
 
-		if ( activeCategories === null ) {
+		let filteredVars;
+		if (activeCategories === null) {
 			filteredVars = allVars;
 		} else {
-			filteredVars = allVars.filter( function (v) {
-				return activeCategories.indexOf(v.category) !== -1;
-			});
-			// Fall back to all if category filtering left nothing (custom variable names)
-			if ( ! filteredVars.length ) filteredVars = allVars;
+			filteredVars = allVars.filter(v => activeCategories.includes(v.category));
+			if (!filteredVars.length) filteredVars = allVars;
 		}
 
 		showMenu(e, input, allVars, filteredVars);
-	}
+	};
 
 	// -------------------------------------------------------------------------
 	// Global close handlers
 	// -------------------------------------------------------------------------
 
-	document.addEventListener('mousedown', function (e) {
-		if ( menuEl && menuEl.style.display === 'flex' && ! menuEl.contains(e.target) ) {
-			hideMenu();
-		}
+	document.addEventListener('mousedown', (e) => {
+		if (menuEl?.style.display === 'flex' && !menuEl.contains(e.target)) hideMenu();
 	}, true);
 
-	document.addEventListener('keydown', function (e) {
-		if ( e.key === 'Escape' && menuEl && menuEl.style.display === 'flex' ) {
-			hideMenu();
-		}
+	document.addEventListener('keydown', (e) => {
+		if (e.key === 'Escape' && menuEl?.style.display === 'flex') hideMenu();
 	});
 
 	// -------------------------------------------------------------------------
 	// Init — wait for Bricks panel
 	// -------------------------------------------------------------------------
 
-	function init() {
+	const init = () => {
 		buildMenu();
 		document.addEventListener('contextmenu', onContextMenu, true);
-	}
+	};
 
-	var pollInterval = setInterval( function () {
-		if ( document.getElementById('bricks-panel') ) {
+	const pollInterval = setInterval(() => {
+		if (document.getElementById('bricks-panel')) {
 			clearInterval(pollInterval);
 			init();
 		}
 	}, 500);
-
 })();

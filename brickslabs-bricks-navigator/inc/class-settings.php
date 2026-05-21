@@ -26,6 +26,7 @@ final class Settings {
 		'brickslabs_bricks_navigator_css_editor_auto_apply'   => false,
 		'brickslabs_bricks_navigator_bem_classes'             => false,
 		'brickslabs_bricks_navigator_css_var_context_menu'   => false,
+		'brickslabs_bricks_navigator_class_tooltip'          => false,
 	];
 
 	public function register(): void {
@@ -242,6 +243,14 @@ final class Settings {
 			'brickslabs_bricks_navigator_enhancements',
 			false,
 			__( 'Right-click any compatible Bricks panel control (number, color, text CSS fields) to open a popover listing CSS custom properties defined on :root. Variables are filtered by relevance to the control type (color, spacing, typography, etc.). Click a variable to insert var(--name) into the field.', 'brickslabs-bricks-navigator' )
+		);
+
+		$this->add_toggle(
+			'brickslabs_bricks_navigator_class_tooltip',
+			__( 'Class Tooltip', 'brickslabs-bricks-navigator' ) . '<br><span style="font-weight:normal;">' . __( '(Beta)', 'brickslabs-bricks-navigator' ) . '</span>',
+			'brickslabs_bricks_navigator_enhancements',
+			false,
+			__( 'Hold Shift or Cmd/Ctrl while hovering over any element in the Bricks structure panel to see a tooltip listing all active CSS global classes applied to that element.', 'brickslabs-bricks-navigator' )
 		);
 	}
 

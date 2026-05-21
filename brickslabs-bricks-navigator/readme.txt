@@ -5,7 +5,7 @@ Tags: bricks, bricks builder, admin bar
 Donate link: https://www.paypal.me/sridharkatakam
 Requires at least: 6.0
 Tested up to: 6.9.4
-Stable tag: 1.1.7
+Stable tag: 1.1.8
 Requires PHP: 8.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -50,6 +50,10 @@ A BEM class action on each structure panel layer to assign global classes in BEM
 
 Right-click any CSS value input in the Bricks editor to insert a CSS variable from your registered custom properties - with live preview on hover.
 
+=== Class Tooltip (Beta) ===
+
+Hold Shift or Cmd/Ctrl while hovering over any element in the Bricks structure panel to see a tooltip listing all active CSS global classes applied to that element. Saves time when writing custom CSS — no need to click elements one by one just to check which classes are applied.
+
 === Keyboard Shortcuts ===
 
 Adding common elements in Bricks editor is now a single key-press away.
@@ -88,8 +92,13 @@ Search for `bricks navigator` from within your WordPress plugins' Add New page a
 5. Screenshot showing 'Add BEM classes' button when a structure panel layer is hovered.
 6. Screenshot showing BEM Classes dialog.
 7. Screenshot showing contextual menu (with live preview on hover) for the builder controls.
+8. Screenshot showing class tooltip when an element in the structure panel is held down with Shift or Cmd/Ctrl key.
 
 == Changelog ==
+
+= 1.1.8 ( May 21, 2026 ) =
+* Added Class Tooltip enhancement (Beta): hold Shift or Cmd/Ctrl while hovering over any element in the Bricks structure panel to instantly see a tooltip listing all active CSS global classes on that element — no need to select elements one by one.
+* Modernized all JavaScript files to ES6+ syntax: arrow functions, `const`/`let`, optional chaining (`?.`), nullish coalescing (`??`), template literals, `for...of`, destructuring, and spread across all six enhancement modules.
 
 = 1.1.7 ( May 20, 2026 ) =
 * Improved CSS Variables Context Menu: added "All / Rel" toggle button to switch between relevant-only and all variables; preference is persisted to localStorage so custom design system users only set it once.

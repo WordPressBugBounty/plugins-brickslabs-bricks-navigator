@@ -153,6 +153,22 @@ final class Editor {
 				BRICKSLABS_BRICKS_NAVIGATOR_VERSION
 			);
 		}
+
+		if ( $settings->get( 'class_tooltip' ) ) {
+			wp_enqueue_script(
+				'brickslabs-bricks-navigator-class-tooltip',
+				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/js/class-tooltip.js',
+				[ 'bricks-builder' ],
+				BRICKSLABS_BRICKS_NAVIGATOR_VERSION,
+				true
+			);
+			wp_enqueue_style(
+				'brickslabs-bricks-navigator-class-tooltip',
+				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/css/class-tooltip.css',
+				[],
+				BRICKSLABS_BRICKS_NAVIGATOR_VERSION
+			);
+		}
 	}
 
 	/**
