@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: BricksLabs Bricks Navigator 1.1.6\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/brickslabs-brickslabs-bricks-navigator\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/brickslabs-bricks-navigator\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -31,23 +31,23 @@ msgstr ""
 msgid "Sridhar Katakam"
 msgstr ""
 
-#: brickslabs-brickslabs-bricks-navigator.php:122
+#: brickslabs-bricks-navigator.php:122
 #, php-format
 msgctxt "1: required version, 2: current version"
 msgid "BricksLabs Bricks Navigator requires PHP version %1$s or higher. You are running version %2$s."
 msgstr ""
 
-#: brickslabs-brickslabs-bricks-navigator.php:134
+#: brickslabs-bricks-navigator.php:134
 #, php-format
 msgctxt "1: required version, 2: current version"
 msgid "BricksLabs Bricks Navigator requires WordPress version %1$s or higher. You are running version %2$s."
 msgstr ""
 
-#: brickslabs-brickslabs-bricks-navigator.php:144
+#: brickslabs-bricks-navigator.php:144
 msgid "BricksLabs Bricks Navigator requires Bricks theme to be active."
 msgstr ""
 
-#: brickslabs-brickslabs-bricks-navigator.php:253
+#: brickslabs-bricks-navigator.php:253
 msgid "Settings"
 msgstr ""
 
@@ -433,4 +433,88 @@ msgstr ""
 
 #: inc/class-admin-bar.php:415
 msgid "Bricks Navigator settings in a new tab"
+msgstr ""
+
+#: assets/js/bem-classes.js:290
+msgid "Close"
+msgstr ""
+
+#: assets/js/bem-classes.js:293
+msgid "Block class"
+msgstr ""
+
+#: assets/js/bem-classes.js:299
+msgid "Move ID styles to classes"
+msgstr ""
+
+#: assets/js/bem-classes.js:302
+msgid "Cancel"
+msgstr ""
+
+#: assets/js/bem-classes.js:303
+msgid "Assign Classes"
+msgstr ""
+
+#: assets/js/bem-classes.js:322
+msgid "root"
+msgstr ""
+
+#: assets/js/bem-classes.js:389
+msgid "assigned to %d element"
+msgid_plural "assigned to %d elements"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/js/bem-classes.js:390
+msgid "removed from %d element"
+msgid_plural "removed from %d elements"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/js/bem-classes.js:392
+msgid "BEM classes %s"
+msgstr ""
+
+#: assets/js/bem-classes.js:393
+msgid "BEM classes unchanged"
+msgstr ""
+
+#: assets/js/css-editor.js:721
+msgid "element"
+msgstr ""
+
+#: assets/js/css-editor.js:722
+msgid "Apply"
+msgstr ""
+
+#: assets/js/css-editor.js:786
+msgid "class"
+msgstr ""
+
+#: assets/js/css-editor.js:786
+msgid "ID"
+msgstr ""
+
+#: assets/js/css-var-context-menu.js:290
+msgid "Showing relevant variables — click to show all"
+msgstr ""
+
+#: assets/js/css-var-context-menu.js:294
+msgid "Showing all variables — click to show relevant only"
+msgstr ""
+
+#: assets/js/css-var-context-menu.js:312
+msgid "Search variables…"
+msgstr ""
+
+#: assets/js/css-var-context-menu.js:314
+msgid "Re-collect variables"
+msgstr ""
+
+#: assets/js/css-var-context-menu.js:365
+msgid "No variables found."
+msgstr ""
+
+#: assets/js/class-tooltip.js:42
+msgid "No classes"
 msgstr ""

@@ -1,4 +1,6 @@
 (() => {
+	const __ = ( wp && wp.i18n ) ? wp.i18n.__ : function( s ) { return s; };
+
 	const TOOLTIP_ID = 'bl-class-tooltip';
 	const VIEWPORT_MARGIN = 12;
 
@@ -39,7 +41,7 @@
 		if (classNames.length === 0) {
 			const empty = document.createElement('span');
 			empty.className = 'bl-ct-empty';
-			empty.textContent = 'No classes';
+			empty.textContent = __( 'No classes', 'brickslabs-bricks-navigator' );
 			el.appendChild(empty);
 		} else {
 			for (const name of classNames) {

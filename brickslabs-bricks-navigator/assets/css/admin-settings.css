@@ -104,3 +104,63 @@
 .bricks-navigator-settings input[type="checkbox"]:focus {
 	box-shadow: 0 0 0 1px #2271b1;
 }
+
+/* Section box — used for Admin Bar Menu and Enhancements sections */
+.bricks-navigator-settings .bn-section-box {
+	background: #f6f7f7;
+	border-radius: 6px;
+	margin: 24px 0;
+	overflow: hidden;
+}
+
+/* Accordion heading */
+.bricks-navigator-settings .bn-section-box .bn-section-heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	cursor: pointer;
+	user-select: none;
+	margin: 0;
+	padding: 16px 20px;
+	font-size: 14px;
+}
+
+.bricks-navigator-settings .bn-section-box .bn-section-heading::after {
+	content: '';
+	flex-shrink: 0;
+	width: 8px;
+	height: 8px;
+	border-right: 2px solid #666;
+	border-bottom: 2px solid #666;
+	transform: rotate( -135deg );
+	transition: transform 0.2s ease;
+	margin-top: 4px;
+}
+
+.bricks-navigator-settings .bn-section-box.bn-collapsed .bn-section-heading::after {
+	transform: rotate( 45deg );
+	margin-top: -2px;
+}
+
+/* Accordion body */
+.bricks-navigator-settings .bn-section-box .bn-section-body {
+	padding: 0 20px 16px;
+}
+
+.bricks-navigator-settings .bn-section-box.bn-collapsed .bn-section-body {
+	display: none;
+}
+
+/* H3 sub-headings inside the body */
+.bricks-navigator-settings .bn-section-box h3 {
+	font-size: 14px;
+	font-weight: 600;
+	margin: 24px 0 0;
+	color: #444;
+	border-top: 1px solid #e2e4e7;
+	padding-top: 20px;
+}
+
+.bricks-navigator-settings .bn-section-box .form-table {
+	margin-top: 0;
+}

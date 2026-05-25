@@ -269,7 +269,6 @@ final class Admin_Bar {
 			'roadmap'       => [ 'label' => __( 'Roadmap', 'brickslabs-bricks-navigator' ),        'href' => 'https://bricksbuilder.io/roadmap/' ],
 			'changelog'     => [ 'label' => __( 'Changelog', 'brickslabs-bricks-navigator' ),      'href' => 'https://bricksbuilder.io/changelog/' ],
 			'academy'       => [ 'label' => __( 'Academy', 'brickslabs-bricks-navigator' ),        'href' => 'https://academy.bricksbuilder.io/' ],
-			'academy-preview'       => [ 'label' => __( 'Academy Preview', 'brickslabs-bricks-navigator' ),        'href' => 'https://academy-preview.bricksbuilder.io/' ],
 			'forum'         => [ 'label' => __( 'Forum', 'brickslabs-bricks-navigator' ),          'href' => 'https://forum.bricksbuilder.io/' ],
 			'facebook-group'=> [ 'label' => __( 'Facebook Group', 'brickslabs-bricks-navigator' ), 'href' => 'https://www.facebook.com/groups/brickscommunity' ],
 			'youtube'       => [ 'label' => __( 'YouTube Channel', 'brickslabs-bricks-navigator' ),'href' => 'https://www.youtube.com/c/bricksbuilder/videos' ],

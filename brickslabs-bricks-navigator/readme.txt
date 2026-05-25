@@ -5,7 +5,7 @@ Tags: bricks, bricks builder, admin bar
 Donate link: https://www.paypal.me/sridharkatakam
 Requires at least: 6.0
 Tested up to: 6.9.4
-Stable tag: 1.1.8
+Stable tag: 1.1.9
 Requires PHP: 8.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -95,6 +95,13 @@ Search for `bricks navigator` from within your WordPress plugins' Add New page a
 8. Screenshot showing class tooltip when an element in the structure panel is held down with Shift or Cmd/Ctrl key.
 
 == Changelog ==
+
+= 1.1.9 ( May 25, 2026 ) =
+* Fixed compatibility issues with Advanced Themer.
+* Added a setting for Bricks Menu in the WP admin bar.
+* Separated Admin Bar Menu and Enhancements into separate accordion sections on the plugin settings page.
+* Added full WordPress JavaScript i18n support (wp-i18n) to BEM Classes, CSS Editor, and CSS Variables Context Menu editor enhancements: all user-facing strings are now translatable via standard wp.i18n.__() calls and wp_set_script_translations().
+* Fixed .pot file: corrected doubled plugin filename in source-file references (brickslabs-brickslabs-bricks-navigator.php → brickslabs-bricks-navigator.php).
 
 = 1.1.8 ( May 21, 2026 ) =
 * Added Class Tooltip enhancement (Beta): hold Shift or Cmd/Ctrl while hovering over any element in the Bricks structure panel to instantly see a tooltip listing all active CSS global classes on that element — no need to select elements one by one.

@@ -1,4 +1,6 @@
 (() => {
+	const __ = ( wp && wp.i18n ) ? wp.i18n.__ : function( s ) { return s; };
+
 	// -------------------------------------------------------------------------
 	// Constants
 	// -------------------------------------------------------------------------
@@ -285,11 +287,11 @@
 		if (!btn) return;
 		if (showOnlyRelevant) {
 			btn.textContent = 'All';
-			btn.title = 'Showing relevant variables — click to show all';
+			btn.title = __( 'Showing relevant variables — click to show all', 'brickslabs-bricks-navigator' );
 			btn.classList.remove('is-active');
 		} else {
 			btn.textContent = 'Rel';
-			btn.title = 'Showing all variables — click to show relevant only';
+			btn.title = __( 'Showing all variables — click to show relevant only', 'brickslabs-bricks-navigator' );
 			btn.classList.add('is-active');
 		}
 	};
@@ -304,12 +306,13 @@
 		menuEl.id = MENU_ID;
 		menuEl.setAttribute('role', 'dialog');
 		menuEl.setAttribute('aria-label', 'CSS Variables');
+		const escAttr = ( s ) => String( s ).replace( /"/g, '&quot;' );
 		menuEl.innerHTML =
 			'<div class="bl-var-header">' +
-				'<input type="text" class="bl-var-search" placeholder="Search variables…" autocomplete="off" spellcheck="false">' +
+				`<input type="text" class="bl-var-search" placeholder="${escAttr( __( 'Search variables…', 'brickslabs-bricks-navigator' ) )}" autocomplete="off" spellcheck="false">` +
 				'<button class="bl-var-toggle-filter" title=""></button>' +
-				'<button class="bl-var-refresh" title="Re-collect variables">&#8635;</button>' +
-				'<button class="bl-var-close" aria-label="Close">&times;</button>' +
+				`<button class="bl-var-refresh" title="${escAttr( __( 'Re-collect variables', 'brickslabs-bricks-navigator' ) )}">&#8635;</button>` +
+				`<button class="bl-var-close" aria-label="${escAttr( __( 'Close', 'brickslabs-bricks-navigator' ) )}">&times;</button>` +
 			'</div>' +
 			'<div class="bl-var-list"></div>';
 
@@ -359,7 +362,7 @@
 			: activeVars;
 
 		if (!filtered.length) {
-			list.innerHTML = '<p class="bl-var-empty">No variables found.</p>';
+			list.innerHTML = `<p class="bl-var-empty">${__( 'No variables found.', 'brickslabs-bricks-navigator' )}</p>`;
 			return;
 		}
 

@@ -1,6 +1,9 @@
 #blcss-editor-panel {
 	border-top: 1px solid var(--builder-border-color, #e0e0e0);
 	font-size: 12px;
+	order: 999;
+	flex-shrink: 0;
+	grid-column: 1 / 2;
 }
 
 #blcss-editor-panel .blcss-header {

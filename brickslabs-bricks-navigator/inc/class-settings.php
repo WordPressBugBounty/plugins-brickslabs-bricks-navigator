@@ -15,6 +15,7 @@ final class Settings {
 
 	/** @var array<string,mixed> Option defaults keyed by option name. */
 	private const DEFAULTS = [
+		'brickslabs_bricks_navigator_bricks_menu'             => true,
 		'brickslabs_bricks_navigator_show_in_editor'          => false,
 		'brickslabs_bricks_navigator_show_community_menu'     => false,
 		'brickslabs_bricks_navigator_show_bricks_internal'    => false,
@@ -91,6 +92,149 @@ final class Settings {
 			[],
 			BRICKSLABS_BRICKS_NAVIGATOR_VERSION
 		);
+		add_action( 'admin_footer', [ $this, 'render_bricks_menu_toggle_script' ] );
+	}
+
+	public function render_bricks_menu_toggle_script(): void {
+		?>
+		<script>
+		document.addEventListener( 'DOMContentLoaded', function () {
+			const form = document.querySelector( '.bricks-navigator-settings .settings-form' );
+			if ( ! form ) return;
+
+			// Find a section's H2 by walking up from the first field in that section.
+			// Using field IDs is language-agnostic — text-content matching would break
+			// the UI entirely when the page is displayed in a non-English language.
+			function sectionHeading( fieldId ) {
+				const el = form.querySelector( '#' + fieldId );
+				if ( ! el ) return null;
+				const table = el.closest( 'table' );
+				if ( ! table ) return null;
+				// Walk back past any description <p> added by the section callback.
+				let prev = table.previousElementSibling;
+				while ( prev && prev.tagName !== 'H2' ) {
+					prev = prev.previousElementSibling;
+				}
+				return ( prev && prev.tagName === 'H2' ) ? prev : null;
+			}
+
+			const adminBarMenuH2 = sectionHeading( 'brickslabs_bricks_navigator_bricks_menu' );
+			const generalH2      = sectionHeading( 'brickslabs_bricks_navigator_show_in_editor' );
+			const menuItemsH2    = sectionHeading( 'brickslabs_bricks_navigator_show_community_menu' );
+			const enhancementsH2 = sectionHeading( 'brickslabs_bricks_navigator_auto_select_class' );
+
+			// sectionKey is a stable, translation-safe identifier stored in
+			// localStorage to persist the accordion's open/collapsed state.
+			function wrapSection( startEl, stopFn, sectionKey ) {
+				const wrapper = document.createElement( 'div' );
+				wrapper.className = 'bn-section-box';
+				if ( sectionKey ) wrapper.dataset.bnSection = sectionKey;
+				startEl.parentNode.insertBefore( wrapper, startEl );
+				wrapper.appendChild( startEl );
+				let sibling = wrapper.nextElementSibling;
+				while ( sibling && ! stopFn( sibling ) ) {
+					const next = sibling.nextElementSibling;
+					wrapper.appendChild( sibling );
+					sibling = next;
+				}
+				return wrapper;
+			}
+
+			function makeAccordion( wrapper ) {
+				const heading = wrapper.querySelector( 'h2' );
+				if ( ! heading ) return;
+
+				heading.classList.add( 'bn-section-heading' );
+
+				const body = document.createElement( 'div' );
+				body.className = 'bn-section-body';
+				let sibling = heading.nextElementSibling;
+				while ( sibling ) {
+					const next = sibling.nextElementSibling;
+					body.appendChild( sibling );
+					sibling = next;
+				}
+				wrapper.appendChild( body );
+
+				// Restore persisted state before the first paint.
+				const key = wrapper.dataset.bnSection
+					? 'bn_accordion_' + wrapper.dataset.bnSection
+					: null;
+				if ( key && localStorage.getItem( key ) === 'collapsed' ) {
+					wrapper.classList.add( 'bn-collapsed' );
+				}
+
+				heading.addEventListener( 'click', function () {
+					wrapper.classList.toggle( 'bn-collapsed' );
+					if ( key ) {
+						localStorage.setItem(
+							key,
+							wrapper.classList.contains( 'bn-collapsed' ) ? 'collapsed' : 'open'
+						);
+					}
+				} );
+			}
+
+			// "Admin Bar Menu" box spans from its heading up to (but not including)
+			// the "Enhancements" heading, so "General Settings" and "Menu Items"
+			// sub-sections are enclosed within it. The stop condition uses the
+			// cached enhancementsH2 reference — no text matching needed.
+			if ( adminBarMenuH2 ) {
+				makeAccordion( wrapSection( adminBarMenuH2, function ( el ) {
+					return el === enhancementsH2;
+				}, 'admin-bar-menu' ) );
+			}
+
+			// "Enhancements" box spans to the submit button.
+			if ( enhancementsH2 ) {
+				makeAccordion( wrapSection( enhancementsH2, function ( el ) {
+					return el.classList.contains( 'submit' );
+				}, 'enhancements' ) );
+			}
+
+			// Demote "General Settings" and "Menu Items" H2s to H3s so they read
+			// as sub-headings inside the "Admin Bar Menu" accordion. Uses cached
+			// DOM references — no text matching needed.
+			[ generalH2, menuItemsH2 ].filter( Boolean ).forEach( function ( h2 ) {
+				const h3 = document.createElement( 'h3' );
+				h3.textContent = h2.textContent;
+				h2.parentNode.replaceChild( h3, h2 );
+			} );
+
+			// Hide "General Settings" and "Menu Items" sub-sections when the
+			// "Bricks Menu" toggle is off. Everything inside the Admin Bar Menu
+			// section body after the first settings table is considered gated.
+			// No text matching — purely structural.
+			const bricksMenuCb = form.querySelector( '#brickslabs_bricks_navigator_bricks_menu' );
+			if ( bricksMenuCb ) {
+				const sectionBody = bricksMenuCb.closest( 'table' ) &&
+					bricksMenuCb.closest( 'table' ).closest( '.bn-section-body' );
+				if ( sectionBody ) {
+					const firstTable = sectionBody.querySelector( 'table' );
+					function getGatedEls() {
+						if ( ! firstTable ) return [];
+						const result = [];
+						let el = firstTable.nextElementSibling;
+						while ( el ) {
+							result.push( el );
+							el = el.nextElementSibling;
+						}
+						return result;
+					}
+					function applyGating( show ) {
+						getGatedEls().forEach( function ( el ) {
+							el.style.display = show ? '' : 'none';
+						} );
+					}
+					applyGating( bricksMenuCb.checked );
+					bricksMenuCb.addEventListener( 'change', function () {
+						applyGating( this.checked );
+					} );
+				}
+			}
+		} );
+		</script>
+		<?php
 	}
 
 	public function render_page(): void {
@@ -133,6 +277,22 @@ final class Settings {
 	// -------------------------------------------------------------------------
 
 	public function register_settings(): void {
+		// Admin Bar Menu section — gates the General Settings and Menu Items sections below.
+		add_settings_section(
+			'brickslabs_bricks_navigator_bricks_menu_section',
+			__( 'Admin Bar Menu', 'brickslabs-bricks-navigator' ),
+			null,
+			'brickslabs-bricks-navigator'
+		);
+
+		$this->add_toggle(
+			'brickslabs_bricks_navigator_bricks_menu',
+			__( 'Bricks Menu', 'brickslabs-bricks-navigator' ),
+			'brickslabs_bricks_navigator_bricks_menu_section',
+			true,
+			__( 'Show the Bricks menu in the WordPress admin bar.', 'brickslabs-bricks-navigator' )
+		);
+
 		// General Settings section.
 		add_settings_section(
 			'brickslabs_bricks_navigator_general',

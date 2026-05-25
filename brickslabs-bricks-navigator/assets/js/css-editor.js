@@ -1,4 +1,6 @@
 (() => {
+	const __ = ( wp && wp.i18n ) ? wp.i18n.__ : function( s ) { return s; };
+
 	// ---------------------------------------------------------------------------
 	// Constants
 	// ---------------------------------------------------------------------------
@@ -716,8 +718,8 @@
 			'<div class="blcss-body">',
 			'  <textarea class="blcss-textarea" spellcheck="false" autocomplete="off"></textarea>',
 			'  <div class="blcss-footer">',
-			'    <span class="blcss-context-badge">element</span>',
-			'    <button class="blcss-apply-btn">Apply</button>',
+			`    <span class="blcss-context-badge">${__( 'element', 'brickslabs-bricks-navigator' )}</span>`,
+			`    <button class="blcss-apply-btn">${__( 'Apply', 'brickslabs-bricks-navigator' )}</button>`,
 			'  </div>',
 			'</div>',
 		].join('');
@@ -781,7 +783,7 @@
 		state.lastContextKey = contextKey;
 
 		selectorEl.textContent = ctx.selector;
-		badge.textContent = ctx.type === 'class' ? 'class' : 'ID';
+		badge.textContent = ctx.type === 'class' ? __( 'class', 'brickslabs-bricks-navigator' ) : __( 'ID', 'brickslabs-bricks-navigator' );
 		badge.classList.toggle('blcss-class-context', ctx.type === 'class');
 
 		if (contextChanged || !state.dirty) {

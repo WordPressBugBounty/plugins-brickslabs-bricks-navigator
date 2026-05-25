@@ -103,10 +103,11 @@ final class Editor {
 			wp_enqueue_script(
 				'brickslabs-bricks-navigator-css-editor',
 				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/js/css-editor.js',
-				[ 'bricks-builder' ],
+				[ 'bricks-builder', 'wp-i18n' ],
 				BRICKSLABS_BRICKS_NAVIGATOR_VERSION,
 				true
 			);
+			wp_set_script_translations( 'brickslabs-bricks-navigator-css-editor', 'brickslabs-bricks-navigator', BRICKSLABS_BRICKS_NAVIGATOR_PATH . 'languages' );
 			wp_localize_script(
 				'brickslabs-bricks-navigator-css-editor',
 				'blCssEditorConfig',
@@ -126,10 +127,11 @@ final class Editor {
 			wp_enqueue_script(
 				'brickslabs-bricks-navigator-bem-classes',
 				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/js/bem-classes.js',
-				[ 'bricks-builder' ],
+				[ 'bricks-builder', 'wp-i18n' ],
 				BRICKSLABS_BRICKS_NAVIGATOR_VERSION,
 				true
 			);
+			wp_set_script_translations( 'brickslabs-bricks-navigator-bem-classes', 'brickslabs-bricks-navigator', BRICKSLABS_BRICKS_NAVIGATOR_PATH . 'languages' );
 			wp_enqueue_style(
 				'brickslabs-bricks-navigator-bem-classes',
 				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/css/bem-classes.css',
@@ -142,10 +144,11 @@ final class Editor {
 			wp_enqueue_script(
 				'brickslabs-bricks-navigator-css-var-context-menu',
 				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/js/css-var-context-menu.js',
-				[ 'bricks-builder' ],
+				[ 'bricks-builder', 'wp-i18n' ],
 				BRICKSLABS_BRICKS_NAVIGATOR_VERSION,
 				true
 			);
+			wp_set_script_translations( 'brickslabs-bricks-navigator-css-var-context-menu', 'brickslabs-bricks-navigator', BRICKSLABS_BRICKS_NAVIGATOR_PATH . 'languages' );
 			wp_enqueue_style(
 				'brickslabs-bricks-navigator-css-var-context-menu',
 				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/css/css-var-context-menu.css',
@@ -158,10 +161,11 @@ final class Editor {
 			wp_enqueue_script(
 				'brickslabs-bricks-navigator-class-tooltip',
 				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/js/class-tooltip.js',
-				[ 'bricks-builder' ],
+				[ 'bricks-builder', 'wp-i18n' ],
 				BRICKSLABS_BRICKS_NAVIGATOR_VERSION,
 				true
 			);
+			wp_set_script_translations( 'brickslabs-bricks-navigator-class-tooltip', 'brickslabs-bricks-navigator', BRICKSLABS_BRICKS_NAVIGATOR_PATH . 'languages' );
 			wp_enqueue_style(
 				'brickslabs-bricks-navigator-class-tooltip',
 				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/css/class-tooltip.css',

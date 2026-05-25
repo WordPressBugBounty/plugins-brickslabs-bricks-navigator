@@ -1,4 +1,8 @@
 (() => {
+	const __ = ( wp && wp.i18n ) ? wp.i18n.__ : function( s ) { return s; };
+	const _n = ( wp && wp.i18n ) ? wp.i18n._n : function( s, p, n ) { return n === 1 ? s : p; };
+	const sprintf = ( wp && wp.i18n ) ? wp.i18n.sprintf : function( fmt, ...args ) { let i = 0; return fmt.replace( /%[sd]/g, () => args[ i++ ] ?? '' ); };
+
 	const BUTTON_CLASS = 'bl-bem-button';
 	const MODAL_CLASS = 'bl-bem-modal';
 	const PROCESSED_ATTR = 'data-bl-bem-ready';
@@ -92,12 +96,18 @@
 		);
 		const titleInput = node?.querySelector('.title input, input.title, .structure-title input');
 		const titleText = node?.querySelector('.title, .structure-title, .label');
-		const raw =
-			titleInput?.value ||
-			titleText?.textContent ||
-			element.label ||
-			element.name ||
-			'element';
+
+		let raw;
+		if (titleInput?.value) {
+			raw = titleInput.value;
+		} else if (titleText) {
+			const clone = titleText.cloneNode(true);
+			clone.querySelectorAll('.brxc-tag-btn-wrapper, .brxc-tag-btn').forEach(el => el.remove());
+			raw = clone.textContent;
+		} else {
+			raw = element.label || element.name || 'element';
+		}
+
 		return (
 			raw.replace(/\s*(section|container|block|div|heading|text|image)$/i, '').trim() ||
 			element.name ||
@@ -274,23 +284,23 @@
 		const overlay = document.createElement('div');
 		overlay.className = MODAL_CLASS;
 		overlay.innerHTML = `
-			<div class="bl-bem-dialog" role="dialog" aria-modal="true" aria-label="BEM Classes">
+			<div class="bl-bem-dialog" role="dialog" aria-modal="true" aria-label="${escapeHtml( __( 'BEM Classes', 'brickslabs-bricks-navigator' ) )}">
 				<div class="bl-bem-header">
-					<strong>BEM Classes</strong>
-					<button type="button" class="bl-bem-close" aria-label="Close">x</button>
+					<strong>${escapeHtml( __( 'BEM Classes', 'brickslabs-bricks-navigator' ) )}</strong>
+					<button type="button" class="bl-bem-close" aria-label="${escapeHtml( __( 'Close', 'brickslabs-bricks-navigator' ) )}">x</button>
 				</div>
 				<label class="bl-bem-field">
-					<span>Block class</span>
+					<span>${escapeHtml( __( 'Block class', 'brickslabs-bricks-navigator' ) )}</span>
 					<input type="text" class="bl-bem-input" value="${escapeHtml(defaultBlock)}" placeholder="hero-card">
 				</label>
 				<div class="bl-bem-list"></div>
 				<label class="bl-bem-option">
 					<div data-control="checkbox"><input type="checkbox" class="bl-bem-move-styles"></div>
-					<span>Move ID styles to classes</span>
+					<span>${escapeHtml( __( 'Move ID styles to classes', 'brickslabs-bricks-navigator' ) )}</span>
 				</label>
 				<div class="bl-bem-footer">
-					<button type="button" class="bl-bem-secondary">Cancel</button>
-					<button type="button" class="bl-bem-primary">Assign Classes</button>
+					<button type="button" class="bl-bem-secondary">${escapeHtml( __( 'Cancel', 'brickslabs-bricks-navigator' ) )}</button>
+					<button type="button" class="bl-bem-primary">${escapeHtml( __( 'Assign Classes', 'brickslabs-bricks-navigator' ) )}</button>
 				</div>
 			</div>`;
 
@@ -309,7 +319,7 @@
 				<div data-control="checkbox"><input type="checkbox" data-id="${escapeHtml(row.id)}" checked></div>
 				<span class="bl-bem-row-title">${escapeHtml(row.label)}</span>
 				<code>${escapeHtml(initialClassMap[row.id])}</code>
-				${isRoot ? '<span class="bl-bem-root">root</span>' : ''}
+				${isRoot ? `<span class="bl-bem-root">${escapeHtml( __( 'root', 'brickslabs-bricks-navigator' ) )}</span>` : ''}
 			</label>`;
 		}).join('');
 
@@ -376,9 +386,12 @@
 			closeModal();
 
 			const parts = [];
-			if (assigned) parts.push(`assigned to ${assigned} element${assigned === 1 ? '' : 's'}`);
-			if (removed) parts.push(`removed from ${removed} element${removed === 1 ? '' : 's'}`);
-			showMessage(`BEM classes ${parts.length ? parts.join(', ') : 'unchanged'}`);
+			if (assigned) parts.push( sprintf( _n( 'assigned to %d element', 'assigned to %d elements', assigned, 'brickslabs-bricks-navigator' ), assigned ) );
+			if (removed) parts.push( sprintf( _n( 'removed from %d element', 'removed from %d elements', removed, 'brickslabs-bricks-navigator' ), removed ) );
+			const bemMsg = parts.length
+				? sprintf( __( 'BEM classes %s', 'brickslabs-bricks-navigator' ), parts.join(', ') )
+				: __( 'BEM classes unchanged', 'brickslabs-bricks-navigator' );
+			showMessage( bemMsg );
 		});
 
 		setTimeout(() => { input.focus(); input.select(); }, 0);
@@ -399,8 +412,8 @@
 			const button = document.createElement('button');
 			button.type = 'button';
 			button.className = BUTTON_CLASS;
-			button.setAttribute('aria-label', 'Add BEM classes');
-			button.title = 'Add BEM classes';
+			button.setAttribute('aria-label', __( 'Add BEM classes', 'brickslabs-bricks-navigator' ));
+			button.title = __( 'Add BEM classes', 'brickslabs-bricks-navigator' );
 			button.innerHTML = '<span aria-hidden="true">B</span>';
 
 			button.addEventListener('click', (event) => {
