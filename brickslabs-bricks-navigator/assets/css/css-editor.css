@@ -1,9 +1,29 @@
+/*
+ * Move the scroll container from #bricks-structure to its inner tree area
+ * (.panel-content) so that the CSS editor panel — a flex sibling of
+ * .panel-content — is always visible at the bottom and never scrolled away.
+ */
+#bricks-structure {
+	overflow-y: hidden !important;
+}
+
+#bricks-structure .panel-content {
+	overflow-y: auto !important;
+	min-height: 0 !important;
+	scrollbar-width: none !important;
+}
+
+#bricks-structure .panel-content::-webkit-scrollbar {
+	display: none;
+}
+
 #blcss-editor-panel {
 	border-top: 1px solid var(--builder-border-color, #e0e0e0);
 	font-size: 12px;
 	order: 999;
 	flex-shrink: 0;
 	grid-column: 1 / 2;
+	background: var(--builder-bg);
 }
 
 #blcss-editor-panel .blcss-header {

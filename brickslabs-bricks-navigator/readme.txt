@@ -5,7 +5,7 @@ Tags: bricks, bricks builder, admin bar
 Donate link: https://www.paypal.me/sridharkatakam
 Requires at least: 6.0
 Tested up to: 6.9.4
-Stable tag: 1.1.9
+Stable tag: 1.2.0
 Requires PHP: 8.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -95,6 +95,10 @@ Search for `bricks navigator` from within your WordPress plugins' Add New page a
 8. Screenshot showing class tooltip when an element in the structure panel is held down with Shift or Cmd/Ctrl key.
 
 == Changelog ==
+
+= 1.2.0 ( May 26, 2026 ) =
+* Internal Bricks links and external Bricks links now appear under their own submenus.
+* Fixed CSS Editor: the CSS editor panel now stays fixed at the bottom of the structure panel at all times. The structure tree scrolls independently above it, so the editor is always accessible regardless of how many elements are on the page. Works correctly with Advanced Themer active.
 
 = 1.1.9 ( May 25, 2026 ) =
 * Fixed compatibility issues with Advanced Themer.

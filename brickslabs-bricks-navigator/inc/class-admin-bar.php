@@ -230,13 +230,19 @@ final class Admin_Bar {
 	// -------------------------------------------------------------------------
 
 	private function add_internal_nodes(): void {
+		$this->bar->add_node( [
+			'id'     => 'bn-bricks-internal',
+			'title'  => __( 'Internal Bricks', 'brickslabs-bricks-navigator' ),
+			'parent' => 'bn-bricks',
+			'meta'   => [ 'class' => 'bn-has-top-border' ],
+		] );
+
 		$this->add_item_with_new_tab(
 			'bn-bricks-dashboard',
-			'bn-bricks',
+			'bn-bricks-internal',
 			__( 'Getting Started', 'brickslabs-bricks-navigator' ),
 			admin_url( 'themes.php?page=bricks' ),
-			__( 'Getting Started in a new tab', 'brickslabs-bricks-navigator' ),
-			'bn-parent-of-mini-child bn-has-top-border'
+			__( 'Getting Started in a new tab', 'brickslabs-bricks-navigator' )
 		);
 
 		$internals = [
@@ -250,7 +256,7 @@ final class Admin_Bar {
 		foreach ( $internals as $id => $item ) {
 			$this->add_item_with_new_tab(
 				"bn-bricks-settings-{$id}",
-				'bn-bricks',
+				'bn-bricks-internal',
 				$item['label'],
 				$item['href'],
 				/* translators: %s: page name */
@@ -264,8 +270,15 @@ final class Admin_Bar {
 	// -------------------------------------------------------------------------
 
 	private function add_external_nodes(): void {
+		$this->bar->add_node( [
+			'id'     => 'bn-bricks-external',
+			'title'  => __( 'External Bricks', 'brickslabs-bricks-navigator' ),
+			'parent' => 'bn-bricks',
+			'meta'   => [ 'class' => 'bn-has-top-border' ],
+		] );
+
 		$externals = [
-			'idea-board'    => [ 'label' => __( 'Idea Board', 'brickslabs-bricks-navigator' ),     'href' => 'https://bricksbuilder.io/ideas/',                          'first' => true ],
+			'idea-board'    => [ 'label' => __( 'Idea Board', 'brickslabs-bricks-navigator' ),     'href' => 'https://bricksbuilder.io/ideas/' ],
 			'roadmap'       => [ 'label' => __( 'Roadmap', 'brickslabs-bricks-navigator' ),        'href' => 'https://bricksbuilder.io/roadmap/' ],
 			'changelog'     => [ 'label' => __( 'Changelog', 'brickslabs-bricks-navigator' ),      'href' => 'https://bricksbuilder.io/changelog/' ],
 			'academy'       => [ 'label' => __( 'Academy', 'brickslabs-bricks-navigator' ),        'href' => 'https://academy.bricksbuilder.io/' ],
@@ -276,17 +289,15 @@ final class Admin_Bar {
 		];
 
 		foreach ( $externals as $id => $item ) {
-			$class = ! empty( $item['first'] ) ? 'bn-has-top-border' : '';
 			$this->bar->add_node( [
 				'id'     => "bn-bricks-{$id}",
 				'title'  => $item['label'],
-				'parent' => 'bn-bricks',
+				'parent' => 'bn-bricks-external',
 				'href'   => $item['href'],
-				'meta'   => array_filter( [
+				'meta'   => [
 					'target' => '_blank',
 					'rel'    => 'noopener noreferrer',
-					'class'  => $class,
-				] ),
+				],
 			] );
 		}
 	}
