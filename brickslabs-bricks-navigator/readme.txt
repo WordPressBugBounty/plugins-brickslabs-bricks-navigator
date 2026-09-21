@@ -1,11 +1,11 @@
 === Bricks Navigator ===
 
 Contributors: srikat
-Tags: bricks, bricks builder, admin bar
+Tags: bricks, bricks builder, admin bar, toolbar, templates
 Donate link: https://www.paypal.me/sridharkatakam
 Requires at least: 6.0
-Tested up to: 6.9.4
-Stable tag: 1.2.0
+Tested up to: 7.1.1
+Stable tag: 1.2.1
 Requires PHP: 8.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -34,13 +34,9 @@ Built for the Bricks community by Sridhar Katakam of [BricksLabs](https://bricks
 
 Performance Notice: The free version loads all templates and pages in the menu and works best for smaller sites (up to ~20 templates and ~50 pages). For larger sites with extensive content, consider upgrading to our upcoming Pro version for better performance. Note that this only applies for admins and other logged-in users for whom the WP toolbar shows.
 
-=== Auto-select Class ===
+=== Grouped Templates & Bricks-only Pages ===
 
-Provides a checkbox so that when an element with a CSS class is selected in the editor, the first unlocked class in the classes panel is automatically activated.
-
-=== CSS Editor (Beta) ===
-
-An inline collapsible CSS editor panel in the Bricks element panel with two-way binding between CSS and controls. Editable CSS maps back to layout controls; unmappable properties are stored in the element's Custom CSS field.
+The Templates submenu can be grouped by Bricks template type - Header, Footer, Single, Section, Popup, Archive, Search results and so on - instead of one long alphabetical list, and each group links to that type's filtered list in the Templates screen. The Pages submenu can be limited to pages that actually have Bricks content, so you never open an empty canvas by mistake. Both are toggles on the settings page.
 
 === BEM Classes (Beta) ===
 
@@ -69,7 +65,19 @@ Adding common elements in Bricks editor is now a single key-press away.
 - R: Rich Text
 - D: Div
 
-Alt+H: Toggle :hover
+Alt + H: Toggle :hover
+
+=== Settings ===
+
+The plugin can be configured at Bricks → Bricks Navigator. Three settings are enabled out of the box:
+
+* Bricks Menu - show the Bricks menu in the WordPress admin bar. Turning this off hides the whole menu.
+* Plugin Settings - list the settings pages of whichever supported Bricks plugins are active.
+* Group Templates by Type - group the Templates submenu by Bricks template type.
+
+Everything else is off until you turn it on: Admin bar in Bricks Editor, Community Menu, Internal Bricks Links, External Bricks Links, Only Pages Built With Bricks, and the editor enhancements (Keyboard Shortcuts, BEM Classes, CSS Variable Context Menu and Class Tooltip).
+
+Defaults only apply while a setting has never been saved. Saving the settings page writes a stored value for every toggle, including the unchecked ones, so a later change to a default will not alter a site that has already saved its settings.
 
 == Installation ==
 
@@ -83,6 +91,23 @@ Search for `bricks navigator` from within your WordPress plugins' Add New page a
 2. Upload the entire `brickslabs-bricks-navigator` folder to the `/wp-content/plugins/` directory.
 3. Activate the plugin through the `Plugins` menu in WordPress.
 
+== Developers ==
+
+Add-ons can extend the menus and the settings page through these hooks.
+
+Filters:
+
+* `brickslabs_bricks_navigator_templates_results` - `( mixed $results, array $query_args )`. Replace the set of templates listed in the menu, for example with a cached or limited query. Return post IDs, WP_Post objects, or any objects exposing an ID property; the result is normalised before use.
+* `brickslabs_bricks_navigator_pages_results` - `( mixed $results, array $query_args )`. The same, for the Pages menu.
+
+Actions:
+
+* `brickslabs_bricks_navigator_loaded` - `( Plugin $plugin )`. Fires on `plugins_loaded` once the plugin's services exist. Use it to bootstrap an add-on rather than checking for the plugin yourself.
+* `brickslabs_bricks_navigator_after_templates_menu` - `( WP_Admin_Bar $bar, int[] $ids )`. Fires once the Templates menu has been built, with the IDs that were added.
+* `brickslabs_bricks_navigator_after_pages_menu` - `( WP_Admin_Bar $bar, int[] $ids )`. The same, for the Pages menu.
+* `brickslabs_bricks_navigator_register_pro_settings` - fires on `admin_init` after this plugin registers its own settings. Add sections and fields using `brickslabs-bricks-navigator` as both the page slug and the option group.
+* `brickslabs_bricks_navigator_show_upgrade_notices` - fires near the top of the settings page, above the form, for licensing or upgrade notices.
+
 == Screenshots ==
 
 1. Screenshot showing the sub menu of Settings.
@@ -94,7 +119,23 @@ Search for `bricks navigator` from within your WordPress plugins' Add New page a
 7. Screenshot showing contextual menu (with live preview on hover) for the builder controls.
 8. Screenshot showing class tooltip when an element in the structure panel is held down with Shift or Cmd/Ctrl key.
 
+== Upgrade Notice ==
+
+= 1.2.1 =
+Fixes the Bricks 2.4 builder toolbar being hidden behind the WP admin bar, and groups the Templates submenu by type. Removes the CSS Editor and Auto-select Class enhancements, which Bricks now does natively - see "Class dropdown: Auto-select first class" in Bricks settings.
+
 == Changelog ==
+
+= 1.2.1 ( September 21, 2026 ) =
+* Fixed "Show admin bar in Bricks" for Bricks 2.4: the builder toolbar was hidden behind the WP admin bar. The offset now targets the new #bricks-workspace layout, and works with the toolbar docked top, bottom, left or right.
+* Added "Group Templates by Type": the Templates submenu is now grouped by Bricks template type (Header, Footer, Single, Section, Popup, Archive, ...) instead of one flat alphabetical list. Each group links to that type's filtered list in the Templates admin screen. Enabled by default; falls back to a flat list when every template shares a single type.
+* Added "Only Pages Built With Bricks": an optional filter so the Pages submenu lists only pages that already have Bricks content, instead of every published page. Disabled by default.
+* Removed the CSS Editor enhancement (and its Auto Apply option). Bricks 2.4 ships bi-directional sync between Custom CSS and style controls natively, so the enhancement is no longer needed.
+* Removed the Auto-select Class enhancement. Bricks covers this with its own "Class dropdown: Auto-select first class" setting under Bricks → Settings → Builder. Note that the Bricks setting does not skip locked classes, which this enhancement did.
+* Added an uninstall routine: deleting the plugin now removes all of its options, including those of retired settings. Multisite networks are cleaned up site by site.
+* Added seven extension points for add-ons. Menu content: the `brickslabs_bricks_navigator_templates_results` and `brickslabs_bricks_navigator_pages_results` filters let an add-on supply its own result set for each menu, and the `brickslabs_bricks_navigator_after_templates_menu` and `brickslabs_bricks_navigator_after_pages_menu` actions fire once each menu is built. Filtered results may be post IDs, WP_Post objects or any objects exposing an ID property. Bootstrapping and UI: `brickslabs_bricks_navigator_loaded` fires on `plugins_loaded` with the plugin instance, `brickslabs_bricks_navigator_register_pro_settings` fires on `admin_init` so an add-on can add sections to the settings page, and `brickslabs_bricks_navigator_show_upgrade_notices` fires above the settings form for licensing or upgrade notices. Signatures are listed in the Developers section.
+* The settings page accordions now stop at the next section heading, so sections added by an add-on are no longer absorbed into the Enhancements box.
+* Regenerated the translation template. It was missing ten strings added in 1.1.9 and 1.2.0 (Bricks Menu, Class Tooltip, Internal/External Bricks and others), which translators had no way to translate. Added translator comments to the BEM Classes notification strings.
 
 = 1.2.0 ( May 26, 2026 ) =
 * Internal Bricks links and external Bricks links now appear under their own submenus.

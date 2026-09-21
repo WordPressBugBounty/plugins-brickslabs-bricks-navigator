@@ -23,8 +23,8 @@ final class Admin_Bar {
 	public function build( array $settings ): void {
 		$this->add_root_node();
 		$this->add_settings_nodes();
-		$this->add_templates_nodes();
-		$this->add_pages_nodes();
+		$this->add_templates_nodes( $settings );
+		$this->add_pages_nodes( $settings );
 
 		if ( $settings['brickslabs_bricks_navigator_show_bricks_internal'] ) {
 			$this->add_internal_nodes();
@@ -112,13 +112,51 @@ final class Admin_Bar {
 	// Templates (always shown)
 	// -------------------------------------------------------------------------
 
-	private function add_templates_nodes(): void {
+	private function add_templates_nodes( array $settings ): void {
+		$query_args = [
+			'fields'         => 'ids',
+			'no_found_rows'  => true,
+			'orderby'        => 'title',
+			'order'          => 'ASC',
+			'post_status'    => 'publish',
+			'post_type'      => 'bricks_template',
+			'posts_per_page' => -1,
+		];
+
+		/**
+		 * Filter the templates listed in the menu.
+		 *
+		 * Lets an add-on swap in its own result set — cached, limited, ordered
+		 * differently — instead of the unbounded query above.
+		 *
+		 * @param mixed $results    Default result set produced by $query_args.
+		 * @param array $query_args Query args used to build that default set.
+		 */
+		$results = apply_filters(
+			'brickslabs_bricks_navigator_templates_results',
+			get_posts( $query_args ),
+			$query_args
+		);
+
+		$template_ids = $this->normalize_post_ids( $results );
+
+		$groups = $settings['brickslabs_bricks_navigator_group_templates']
+			? $this->group_templates_by_type( $template_ids )
+			: [];
+
+		// One group is just an extra click, so fall back to a flat list.
+		$grouped = count( $groups ) > 1;
+
+		// The list is only scrollable when it holds templates directly: group
+		// items open flyout sub-menus, which an overflow container would clip.
+		$classes = $grouped ? 'bn-has-top-border bn-has-groups' : 'bn-has-top-border';
+
 		$this->bar->add_node( [
 			'id'     => 'bn-bricks-templates',
 			'title'  => __( 'Templates', 'brickslabs-bricks-navigator' ),
 			'parent' => 'bn-bricks',
 			'href'   => admin_url( 'edit.php?post_type=bricks_template' ),
-			'meta'   => [ 'class' => 'bn-has-top-border' ],
+			'meta'   => [ 'class' => $classes ],
 		] );
 
 		// "Add New" link.
@@ -132,51 +170,174 @@ final class Admin_Bar {
 			'bn-parent-of-mini-child bn-has-bottom-border'
 		);
 
-		$template_ids = get_posts( [
-			'fields'         => 'ids',
-			'no_found_rows'  => true,
-			'orderby'        => 'title',
-			'order'          => 'ASC',
-			'post_status'    => 'publish',
-			'post_type'      => 'bricks_template',
-			'posts_per_page' => -1,
-		] );
+		if ( ! $grouped ) {
+			foreach ( $template_ids as $post_id ) {
+				$this->add_template_item( $post_id, 'bn-bricks-templates' );
+			}
+		} else {
+			foreach ( $groups as $type => $group ) {
+				$group_id = 'bn-bricks-templates-type-' . $type;
+
+				// Bricks filters its template list on ?template_type=; the
+				// leftovers bucket is not a real type, so it links to the
+				// unfiltered list.
+				$group_url = 'bn-other' === $type
+					? admin_url( 'edit.php?post_type=bricks_template' )
+					: admin_url( 'edit.php?post_type=bricks_template&template_type=' . rawurlencode( $type ) );
+
+				$this->bar->add_node( [
+					'id'     => $group_id,
+					'title'  => esc_html( $group['label'] ),
+					'parent' => 'bn-bricks-templates',
+					'href'   => esc_url( $group_url ),
+					'meta'   => [
+						'class' => 'bn-template-group',
+						/* translators: %s: template type name */
+						'title' => sprintf( __( 'List all %s templates', 'brickslabs-bricks-navigator' ), $group['label'] ),
+					],
+				] );
+
+				foreach ( $group['ids'] as $post_id ) {
+					$this->add_template_item( $post_id, $group_id );
+				}
+			}
+		}
+
+		/**
+		 * Fires after the Templates menu has been built.
+		 *
+		 * @param \WP_Admin_Bar $bar          The admin bar being built.
+		 * @param int[]         $template_ids IDs that were added to the menu.
+		 */
+		do_action( 'brickslabs_bricks_navigator_after_templates_menu', $this->bar, $template_ids );
+	}
+
+	/**
+	 * Coerce a filtered result set into a list of post IDs.
+	 *
+	 * The results filters are public API, so accept the shapes an add-on is
+	 * likely to return: plain IDs, WP_Post objects, or the trimmed row objects
+	 * a hand-written SQL query produces.
+	 *
+	 * @param mixed $results Whatever the filter handed back.
+	 *
+	 * @return int[]
+	 */
+	private function normalize_post_ids( mixed $results ): array {
+		if ( ! is_array( $results ) ) {
+			return [];
+		}
+
+		$ids = [];
+
+		foreach ( $results as $result ) {
+			if ( is_numeric( $result ) ) {
+				$ids[] = (int) $result;
+			} elseif ( is_object( $result ) && isset( $result->ID ) ) {
+				$ids[] = (int) $result->ID;
+			}
+		}
+
+		return array_values( array_filter( $ids ) );
+	}
+
+	/**
+	 * Bucket template IDs by their Bricks template type.
+	 *
+	 * Groups follow the order Bricks itself lists the types in, with anything
+	 * whose type is missing or unrecognised collected at the end.
+	 *
+	 * @param int[] $template_ids Template post IDs, already ordered by title.
+	 *
+	 * @return array<string,array{label:string,ids:int[]}> Keyed by type slug; empty types omitted.
+	 */
+	private function group_templates_by_type( array $template_ids ): array {
+		if ( ! $template_ids ) {
+			return [];
+		}
+
+		// One query for every template's meta, so the get_post_meta() calls below
+		// are cache hits rather than a query per template.
+		update_meta_cache( 'post', $template_ids );
+
+		$labels = [];
+
+		if ( class_exists( '\Bricks\Setup' ) && ! empty( \Bricks\Setup::$control_options['templateTypes'] ) ) {
+			$labels = \Bricks\Setup::$control_options['templateTypes'];
+		}
+
+		$type_key = defined( 'BRICKS_DB_TEMPLATE_TYPE' ) ? BRICKS_DB_TEMPLATE_TYPE : '_bricks_template_type';
+		$groups   = [];
 
 		foreach ( $template_ids as $post_id ) {
-			$edit_url = \Bricks\Helpers::get_builder_edit_link( $post_id );
-			$title    = get_the_title( $post_id );
+			$type = (string) get_post_meta( $post_id, $type_key, true );
 
-			$this->bar->add_node( [
-				'id'     => 'bricks-template' . $post_id,
-				'title'  => esc_html( $title ),
-				'parent' => 'bn-bricks-templates',
-				'href'   => esc_url( $edit_url ),
-				'meta'   => [
-					'title' => __( 'Edit this Template with Bricks', 'brickslabs-bricks-navigator' ),
-					'class' => 'bn-parent-of-mini-child',
-				],
-			] );
+			if ( '' === $type || ! isset( $labels[ $type ] ) ) {
+				$type = 'bn-other';
+			}
 
-			$this->bar->add_node( [
-				'id'     => 'bricks-template-new-tab' . $post_id,
-				'title'  => esc_html( $title ),
-				'parent' => 'bricks-template' . $post_id,
-				'href'   => esc_url( $edit_url ),
-				'meta'   => [
-					'target' => '_blank',
-					'rel'    => 'noopener noreferrer',
-					'title'  => __( 'Edit this Template with Bricks in a new tab', 'brickslabs-bricks-navigator' ),
-					'class'  => 'bn-mini-child bn-mini-child-new-tab',
-				],
-			] );
+			$groups[ $type ][] = $post_id;
 		}
+
+		// Reorder to match Bricks' own type order, then append the leftovers.
+		$ordered = [];
+
+		foreach ( $labels as $type => $label ) {
+			if ( ! empty( $groups[ $type ] ) ) {
+				$ordered[ $type ] = [
+					'label' => $label,
+					'ids'   => $groups[ $type ],
+				];
+			}
+		}
+
+		if ( ! empty( $groups['bn-other'] ) ) {
+			$ordered['bn-other'] = [
+				'label' => __( 'Other', 'brickslabs-bricks-navigator' ),
+				'ids'   => $groups['bn-other'],
+			];
+		}
+
+		return $ordered;
+	}
+
+	/**
+	 * Add a single template node plus its "open in new tab" mini-child.
+	 */
+	private function add_template_item( int $post_id, string $parent ): void {
+		$edit_url = \Bricks\Helpers::get_builder_edit_link( $post_id );
+		$title    = get_the_title( $post_id );
+
+		$this->bar->add_node( [
+			'id'     => 'bricks-template' . $post_id,
+			'title'  => esc_html( $title ),
+			'parent' => $parent,
+			'href'   => esc_url( $edit_url ),
+			'meta'   => [
+				'title' => __( 'Edit this Template with Bricks', 'brickslabs-bricks-navigator' ),
+				'class' => 'bn-parent-of-mini-child',
+			],
+		] );
+
+		$this->bar->add_node( [
+			'id'     => 'bricks-template-new-tab' . $post_id,
+			'title'  => esc_html( $title ),
+			'parent' => 'bricks-template' . $post_id,
+			'href'   => esc_url( $edit_url ),
+			'meta'   => [
+				'target' => '_blank',
+				'rel'    => 'noopener noreferrer',
+				'title'  => __( 'Edit this Template with Bricks in a new tab', 'brickslabs-bricks-navigator' ),
+				'class'  => 'bn-mini-child bn-mini-child-new-tab',
+			],
+		] );
 	}
 
 	// -------------------------------------------------------------------------
 	// Pages (always shown)
 	// -------------------------------------------------------------------------
 
-	private function add_pages_nodes(): void {
+	private function add_pages_nodes( array $settings ): void {
 		$this->bar->add_node( [
 			'id'     => 'bn-bricks-pages',
 			'title'  => __( 'Pages', 'brickslabs-bricks-navigator' ),
@@ -185,7 +346,7 @@ final class Admin_Bar {
 			'meta'   => [ 'class' => 'bn-has-top-border' ],
 		] );
 
-		$page_ids = get_posts( [
+		$page_args = [
 			'fields'         => 'ids',
 			'no_found_rows'  => true,
 			'orderby'        => 'title',
@@ -193,7 +354,34 @@ final class Admin_Bar {
 			'post_status'    => 'publish',
 			'post_type'      => 'page',
 			'posts_per_page' => -1,
-		] );
+		];
+
+		// Pages that were never opened in Bricks have no builder content, so the
+		// edit links below would just open an empty canvas.
+		if ( $settings['brickslabs_bricks_navigator_bricks_pages_only'] ) {
+			$content_key = defined( 'BRICKS_DB_PAGE_CONTENT' ) ? BRICKS_DB_PAGE_CONTENT : '_bricks_page_content_2';
+
+			$page_args['meta_query'] = [
+				[
+					'key'     => $content_key,
+					'compare' => 'EXISTS',
+				],
+			];
+		}
+
+		/**
+		 * Filter the pages listed in the menu.
+		 *
+		 * @param mixed $results   Default result set produced by $page_args.
+		 * @param array $page_args Query args used to build that default set.
+		 */
+		$results = apply_filters(
+			'brickslabs_bricks_navigator_pages_results',
+			get_posts( $page_args ),
+			$page_args
+		);
+
+		$page_ids = $this->normalize_post_ids( $results );
 
 		foreach ( $page_ids as $post_id ) {
 			$edit_url = \Bricks\Helpers::get_builder_edit_link( $post_id );
@@ -223,6 +411,14 @@ final class Admin_Bar {
 				],
 			] );
 		}
+
+		/**
+		 * Fires after the Pages menu has been built.
+		 *
+		 * @param \WP_Admin_Bar $bar      The admin bar being built.
+		 * @param int[]         $page_ids IDs that were added to the menu.
+		 */
+		do_action( 'brickslabs_bricks_navigator_after_pages_menu', $this->bar, $page_ids );
 	}
 
 	// -------------------------------------------------------------------------

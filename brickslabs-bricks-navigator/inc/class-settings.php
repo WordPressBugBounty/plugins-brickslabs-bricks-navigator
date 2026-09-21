@@ -13,7 +13,15 @@ final class Settings {
 	/** @var array<string,mixed>|null Cached options, null until first load. */
 	private ?array $options = null;
 
-	/** @var array<string,mixed> Option defaults keyed by option name. */
+	/**
+	 * Option defaults keyed by option name.
+	 *
+	 * Adding, renaming or retiring an option here means updating the list in
+	 * uninstall.php too, otherwise the row is left behind when the plugin is
+	 * deleted.
+	 *
+	 * @var array<string,mixed>
+	 */
 	private const DEFAULTS = [
 		'brickslabs_bricks_navigator_bricks_menu'             => true,
 		'brickslabs_bricks_navigator_show_in_editor'          => false,
@@ -21,10 +29,9 @@ final class Settings {
 		'brickslabs_bricks_navigator_show_bricks_internal'    => false,
 		'brickslabs_bricks_navigator_show_bricks_external'    => false,
 		'brickslabs_bricks_navigator_show_thirdparty_plugins' => true,
-		'brickslabs_bricks_navigator_auto_select_class'       => false,
+		'brickslabs_bricks_navigator_group_templates'         => true,
+		'brickslabs_bricks_navigator_bricks_pages_only'       => false,
 		'brickslabs_bricks_navigator_keyboard_shortcuts'      => false,
-		'brickslabs_bricks_navigator_css_editor'              => false,
-		'brickslabs_bricks_navigator_css_editor_auto_apply'   => false,
 		'brickslabs_bricks_navigator_bem_classes'             => false,
 		'brickslabs_bricks_navigator_css_var_context_menu'   => false,
 		'brickslabs_bricks_navigator_class_tooltip'          => false,
@@ -121,7 +128,7 @@ final class Settings {
 			const adminBarMenuH2 = sectionHeading( 'brickslabs_bricks_navigator_bricks_menu' );
 			const generalH2      = sectionHeading( 'brickslabs_bricks_navigator_show_in_editor' );
 			const menuItemsH2    = sectionHeading( 'brickslabs_bricks_navigator_show_community_menu' );
-			const enhancementsH2 = sectionHeading( 'brickslabs_bricks_navigator_auto_select_class' );
+			const enhancementsH2 = sectionHeading( 'brickslabs_bricks_navigator_keyboard_shortcuts' );
 
 			// sectionKey is a stable, translation-safe identifier stored in
 			// localStorage to persist the accordion's open/collapsed state.
@@ -188,7 +195,9 @@ final class Settings {
 			// "Enhancements" box spans to the submit button.
 			if ( enhancementsH2 ) {
 				makeAccordion( wrapSection( enhancementsH2, function ( el ) {
-					return el.classList.contains( 'submit' );
+					// Stop at the submit button, or at any following section
+					// heading so add-on sections stay outside this box.
+					return el.classList.contains( 'submit' ) || 'H2' === el.tagName;
 				}, 'enhancements' ) );
 			}
 
@@ -260,6 +269,16 @@ final class Settings {
 			</div>
 
 			<?php settings_errors( 'brickslabs_bricks_navigator_messages' ); ?>
+
+			<?php
+			/**
+			 * Fires near the top of the settings page, above the form.
+			 *
+			 * Gives add-ons a predictable slot for upgrade or licensing notices
+			 * instead of the global admin notice area.
+			 */
+			do_action( 'brickslabs_bricks_navigator_show_upgrade_notices' );
+			?>
 
 			<form action="options.php" method="post" class="settings-form">
 				<?php
@@ -349,6 +368,22 @@ final class Settings {
 			__( 'Show third-party plugin settings in the menu', 'brickslabs-bricks-navigator' )
 		);
 
+		$this->add_toggle(
+			'brickslabs_bricks_navigator_group_templates',
+			__( 'Group Templates by Type', 'brickslabs-bricks-navigator' ),
+			'brickslabs_bricks_navigator_menu',
+			true,
+			__( 'Group the Templates submenu into Header, Footer, Single, Section, Popup, Archive and so on, using each template\'s Bricks template type. Ignored when every template shares one type.', 'brickslabs-bricks-navigator' )
+		);
+
+		$this->add_toggle(
+			'brickslabs_bricks_navigator_bricks_pages_only',
+			__( 'Only Pages Built With Bricks', 'brickslabs-bricks-navigator' ),
+			'brickslabs_bricks_navigator_menu',
+			false,
+			__( 'Limit the Pages submenu to pages that already have Bricks content. Pages never opened in Bricks are hidden, since editing those just opens an empty canvas.', 'brickslabs-bricks-navigator' )
+		);
+
 		// Enhancements section.
 		add_settings_section(
 			'brickslabs_bricks_navigator_enhancements',
@@ -358,35 +393,11 @@ final class Settings {
 		);
 
 		$this->add_toggle(
-			'brickslabs_bricks_navigator_auto_select_class',
-			__( 'Auto-select Class', 'brickslabs-bricks-navigator' ),
-			'brickslabs_bricks_navigator_enhancements',
-			false,
-			__( 'When an element with a CSS class is selected in the editor, automatically activate the first unlocked class in the classes panel.', 'brickslabs-bricks-navigator' )
-		);
-
-		$this->add_toggle(
 			'brickslabs_bricks_navigator_keyboard_shortcuts',
 			__( 'Keyboard Shortcuts', 'brickslabs-bricks-navigator' ),
 			'brickslabs_bricks_navigator_enhancements',
 			false,
 			__( 'Add keyboard shortcuts in the Bricks editor: Alt+H (toggle :hover), S (Section), C (Container), B (Block), D (Div), T (Text Basic), H (Heading), I (Image), R (Rich Text), L (Text Link), W (Wrap with Block).', 'brickslabs-bricks-navigator' )
-		);
-
-		$this->add_toggle(
-			'brickslabs_bricks_navigator_css_editor',
-			__( 'CSS Editor', 'brickslabs-bricks-navigator' ) . '<br><span style="font-weight:normal;">' . __( '(Beta)', 'brickslabs-bricks-navigator' ) . '</span>',
-			'brickslabs_bricks_navigator_enhancements',
-			false,
-			__( 'Show an inline CSS editor panel in the Bricks element panel with two-way binding between CSS and controls. Editable CSS maps back to layout controls; unmappable properties (color, background, border, etc.) are stored in the element\'s Custom CSS field.', 'brickslabs-bricks-navigator' )
-		);
-
-		$this->add_toggle(
-			'brickslabs_bricks_navigator_css_editor_auto_apply',
-			__( 'CSS Editor - Auto Apply', 'brickslabs-bricks-navigator' ) . '<br><span style="font-weight:normal;">' . __( '(Beta)', 'brickslabs-bricks-navigator' ) . '</span>',
-			'brickslabs_bricks_navigator_enhancements',
-			false,
-			__( 'Automatically apply CSS Editor changes as you type (debounced). Requires CSS Editor to be enabled.', 'brickslabs-bricks-navigator' )
 		);
 
 		$this->add_toggle(
@@ -412,6 +423,15 @@ final class Settings {
 			false,
 			__( 'Hold Shift or Cmd/Ctrl while hovering over any element in the Bricks structure panel to see a tooltip listing all active CSS global classes applied to that element.', 'brickslabs-bricks-navigator' )
 		);
+
+		/**
+		 * Fires after this plugin has registered its own settings.
+		 *
+		 * Add-ons hook this to add their sections and fields to this page, using
+		 * 'brickslabs-bricks-navigator' as both the page slug and option group.
+		 * Runs on 'admin_init' via register_settings().
+		 */
+		do_action( 'brickslabs_bricks_navigator_register_pro_settings' );
 	}
 
 	/**

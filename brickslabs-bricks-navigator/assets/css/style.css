@@ -4,10 +4,20 @@
 }
 
 /* Scrollable sub-menus — only Templates and Pages lists, which can grow long.
-   Do NOT apply to Community or Plugin Settings, as those have nested children
-   that are absolutely positioned and would be clipped by overflow:auto. */
-#wp-admin-bar-bn-bricks-templates > .ab-sub-wrapper > .ab-submenu,
+   Do NOT apply to a list whose items open flyout sub-menus (Community, Plugin
+   Settings, and Templates when grouped by type): those are absolutely
+   positioned outside the list and overflow:auto clips them, which also makes
+   them impossible to click. */
+#wp-admin-bar-bn-bricks-templates:not(.bn-has-groups) > .ab-sub-wrapper > .ab-submenu,
 #wp-admin-bar-bn-bricks-pages > .ab-sub-wrapper > .ab-submenu {
+	max-height: 80dvh;
+	overflow-y: auto;
+}
+
+/* Grouped templates: scroll each type's own list instead of the outer one. The
+   only flyouts in here are the "new tab" mini-children, which are positioned
+   inside their item rather than beside it, so they are not clipped. */
+#wp-admin-bar-bn-bricks-templates.bn-has-groups .bn-template-group > .ab-sub-wrapper > .ab-submenu {
 	max-height: 80dvh;
 	overflow-y: auto;
 }

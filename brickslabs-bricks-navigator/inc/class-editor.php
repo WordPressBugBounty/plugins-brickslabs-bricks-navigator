@@ -48,24 +48,74 @@ final class Editor {
 			);
 		}
 
+		wp_add_inline_style( 'brickslabs-bricks-navigator', $this->admin_bar_offset_css() );
+	}
+
+	/**
+	 * CSS that keeps the Bricks editor UI clear of the WP admin bar.
+	 *
+	 * Bricks 2.4 replaced the old absolutely positioned builder layout with the
+	 * #bricks-workspace flex container plus a position:fixed toolbar, so the two
+	 * layouts need different offsets.
+	 */
+	private function admin_bar_offset_css(): string {
+		// WordPress only defines --wp-admin--admin-bar--height for block themes,
+		// so define it here: Bricks 2.4 reads it, and so do the rules below.
 		$css = '
+			body.admin-bar {
+				--wp-admin--admin-bar--height: 32px;
+			}
+			@media screen and (max-width: 782px) {
+				body.admin-bar {
+					--wp-admin--admin-bar--height: 46px;
+				}
+			}
+		';
+
+		if ( $this->uses_workspace_layout() ) {
+			// Bricks removes _admin_bar_bump_cb in the builder, so there is no
+			// html{margin-top} and the admin bar simply overlays the top of the
+			// viewport.  #bricks-workspace therefore keeps its 100vh height and
+			// instead reserves the admin bar height as extra top padding, on top
+			// of the padding it already reserves for a top-docked toolbar.
+			//
+			// The toolbar is position:fixed and needs the offset itself.  Bricks
+			// ships that offset for .toolbar-top, but its own
+			// "#bricks-workspace .bricks-toolbar.toolbar-top" rule resets it via
+			// "inset" and wins on specificity, so the toolbar ends up underneath
+			// the admin bar.
+			return $css . '
+				body.admin-bar #bricks-workspace {
+					padding-top: var(--wp-admin--admin-bar--height, 32px);
+				}
+				body.admin-bar #bricks-workspace.toolbar-top {
+					padding-top: calc(var(--wp-admin--admin-bar--height, 32px) + var(--builder-toolbar-height, 48px));
+				}
+				body.admin-bar #bricks-workspace .bricks-toolbar.toolbar-top,
+				body.admin-bar #bricks-workspace .bricks-toolbar.toolbar-left,
+				body.admin-bar #bricks-workspace .bricks-toolbar.toolbar-right {
+					top: var(--wp-admin--admin-bar--height, 32px);
+				}
+			';
+		}
+
+		// Bricks < 2.4: the panels are positioned individually below the toolbar.
+		return $css . '
 			body.admin-bar #bricks-panel,
 			body.admin-bar #bricks-preview,
 			body.admin-bar #bricks-structure {
 				top: var(--wp-admin--admin-bar--height, 32px);
 				height: calc(100vh - var(--wp-admin--admin-bar--height, 32px) - var(--builder-toolbar-height, 48px));
 			}
-			@media screen and (max-width: 782px) {
-				body.admin-bar #bricks-panel,
-				body.admin-bar #bricks-preview,
-				body.admin-bar #bricks-structure {
-					top: var(--wp-admin--admin-bar--height, 46px);
-					height: calc(100vh - var(--wp-admin--admin-bar--height, 46px) - var(--builder-toolbar-height, 48px));
-				}
-			}
 		';
+	}
 
-		wp_add_inline_style( 'brickslabs-bricks-navigator', $css );
+	/**
+	 * True when the active Bricks version uses the #bricks-workspace layout
+	 * introduced in Bricks 2.4.
+	 */
+	private function uses_workspace_layout(): bool {
+		return defined( 'BRICKS_VERSION' ) && version_compare( BRICKS_VERSION, '2.4', '>=' );
 	}
 
 	/**
@@ -79,16 +129,6 @@ final class Editor {
 
 		$settings = Plugin::instance()->settings();
 
-		if ( $settings->get( 'auto_select_class' ) ) {
-			wp_enqueue_script(
-				'brickslabs-bricks-navigator-auto-select-class',
-				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/js/auto-select-class.js',
-				[],
-				BRICKSLABS_BRICKS_NAVIGATOR_VERSION,
-				true
-			);
-		}
-
 		if ( $settings->get( 'keyboard_shortcuts' ) ) {
 			wp_enqueue_script(
 				'brickslabs-bricks-navigator-keyboard-shortcuts',
@@ -96,30 +136,6 @@ final class Editor {
 				[ 'bricks-builder' ],
 				BRICKSLABS_BRICKS_NAVIGATOR_VERSION,
 				true
-			);
-		}
-
-		if ( $settings->get( 'css_editor' ) ) {
-			wp_enqueue_script(
-				'brickslabs-bricks-navigator-css-editor',
-				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/js/css-editor.js',
-				[ 'bricks-builder', 'wp-i18n' ],
-				BRICKSLABS_BRICKS_NAVIGATOR_VERSION,
-				true
-			);
-			wp_set_script_translations( 'brickslabs-bricks-navigator-css-editor', 'brickslabs-bricks-navigator', BRICKSLABS_BRICKS_NAVIGATOR_PATH . 'languages' );
-			wp_localize_script(
-				'brickslabs-bricks-navigator-css-editor',
-				'blCssEditorConfig',
-				[
-					'autoApply' => (bool) $settings->get( 'css_editor_auto_apply' ),
-				]
-			);
-			wp_enqueue_style(
-				'brickslabs-bricks-navigator-css-editor',
-				BRICKSLABS_BRICKS_NAVIGATOR_URL . 'assets/css/css-editor.css',
-				[],
-				BRICKSLABS_BRICKS_NAVIGATOR_VERSION
 			);
 		}
 

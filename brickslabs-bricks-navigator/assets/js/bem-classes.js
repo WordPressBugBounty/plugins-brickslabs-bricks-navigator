@@ -386,11 +386,17 @@
 			closeModal();
 
 			const parts = [];
+			// translators: %d: number of elements the BEM classes were assigned to.
 			if (assigned) parts.push( sprintf( _n( 'assigned to %d element', 'assigned to %d elements', assigned, 'brickslabs-bricks-navigator' ), assigned ) );
+			// translators: %d: number of elements the BEM classes were removed from.
 			if (removed) parts.push( sprintf( _n( 'removed from %d element', 'removed from %d elements', removed, 'brickslabs-bricks-navigator' ), removed ) );
-			const bemMsg = parts.length
-				? sprintf( __( 'BEM classes %s', 'brickslabs-bricks-navigator' ), parts.join(', ') )
-				: __( 'BEM classes unchanged', 'brickslabs-bricks-navigator' );
+			let bemMsg;
+			if (parts.length) {
+				// translators: %s: comma-separated summary of the changes, e.g. "assigned to 3 elements, removed from 1 element".
+				bemMsg = sprintf( __( 'BEM classes %s', 'brickslabs-bricks-navigator' ), parts.join(', ') );
+			} else {
+				bemMsg = __( 'BEM classes unchanged', 'brickslabs-bricks-navigator' );
+			}
 			showMessage( bemMsg );
 		});
 

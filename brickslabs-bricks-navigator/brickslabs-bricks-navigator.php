@@ -3,7 +3,7 @@
  * Plugin Name:       BricksLabs Bricks Navigator
  * Plugin URI:        https://brickslabs.com/bricks-navigator/
  * Description:       Adds quick links in the WordPress admin bar for users of the Bricks theme.
- * Version:           1.2.0
+ * Version:           1.2.1
  * Author:            Sridhar Katakam
  * Author URI:        https://brickslabs.com/
  * Text Domain:       brickslabs-bricks-navigator
@@ -22,7 +22,7 @@ if (!defined("ABSPATH")) {
 
 final class Plugin
 {
-    const VERSION = "1.2.0";
+    const VERSION = "1.2.1";
 
     private static ?self $instance = null;
 
@@ -90,6 +90,17 @@ final class Plugin
 
         add_action("admin_init", [$this, "check_environment"]);
         add_action("init", [$this, "init_hooks"], 0);
+
+        /**
+         * Fires once the free plugin is loaded and its services exist.
+         *
+         * Add-ons use this to bootstrap themselves: it runs on 'plugins_loaded',
+         * so a listener registered while the add-on's own file loads is already
+         * in place, and every hook below is still ahead.
+         *
+         * @param Plugin $plugin The free plugin instance.
+         */
+        do_action("brickslabs_bricks_navigator_loaded", $this);
     }
 
     private function load_classes(): void
